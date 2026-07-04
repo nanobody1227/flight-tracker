@@ -1,0 +1,57 @@
+# ======================================================================
+# 자동 실행 설정 (GitHub Actions)
+# ----------------------------------------------------------------------
+# 하루 3번(한국시간 오전 8시 / 오후 2시 / 밤 10시) 자동으로 main.py 실행.
+# 실행 후 price_history.csv, index.html 등을 저장소에 자동 저장(커밋)합니다.
+# ======================================================================
+name: flight-price-tracker
+
+on:
+  schedule:
+    # GitHub는 UTC(세계표준시) 기준입니다. 한국시간 = UTC + 9시간.
+    # 아래는 한국시간으로 환산한 값입니다.
+    - cron: "0 23 * * *"   # UTC 23:00 = 한국시간 08:00 (오전 8시)
+    - cron: "0 5 * * *"    # UTC 05:00 = 한국시간 14:00 (오후 2시)
+    - cron: "0 13 * * *"   # UTC 13:00 = 한국시간 22:00 (밤 10시)
+  workflow_dispatch:        # 버튼을 눌러 수동으로도 실행할 수 있게 함
+
+# 저장소에 파일을 커밋(저장)하려면 쓰기 권한이 필요합니다.
+permissions:
+  contents: write
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      # 1) 내 저장소 코드를 가져옵니다
+      - name: 코드 가져오기
+        uses: actions/checkout@v4
+
+      # 2) 파이썬 설치
+      - name: 파이썬 준비
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      # 3) 필요한 라이브러리 설치
+      - name: 라이브러리 설치
+        run: pip install -r requirements.txt
+
+      # 4) 프로그램 실행 (Gmail 비밀 값은 Secrets에서 가져옴)
+      - name: 항공권 검색 실행
+        env:
+          GMAIL_USER: ${{ secrets.GMAIL_USER }}
+          GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
+          GMAIL_TO: ${{ secrets.GMAIL_TO }}
+        run: python main.py
+
+      # 5) 결과 파일을 저장소에 자동 저장(커밋 & 푸시)
+      - name: 결과 저장(커밋)
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          # 결과 파일들을 모두 담습니다 (없는 파일은 알아서 건너뜁니다)
+          git add -A
+          # 바뀐 내용이 있을 때만 커밋 (없으면 조용히 넘어감)
+          git commit -m "자동 업데이트: $(date -u '+%Y-%m-%d %H:%M UTC')" || echo "변경 사항 없음"
+          git push
