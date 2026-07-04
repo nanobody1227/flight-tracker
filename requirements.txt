@@ -1,2 +1,2 @@
-fast-flights
+fast-flights==2.2
 typing_extensions
