@@ -26,39 +26,60 @@
   .tab-btn.active { background: #2563eb; color: #fff; }
   .tab-content { display: none; }
   .tab-content.active { display: block; }
-  .record-card {
-    background: #fff; border-radius: 16px; padding: 20px; text-align: center;
-    box-shadow: 0 2px 10px rgba(0,0,0,.06); margin-bottom: 16px;
-    border: 2px solid #2563eb;
+  /* 역대 최저가 강조 영역 */
+  .record-wrap { margin-bottom: 20px; }
+  .record-title { font-size: 15px; font-weight: 800; color: #1e40af; margin: 6px 2px 10px; }
+  .list-title { font-size: 14px; font-weight: 700; color: #475569; margin: 18px 2px 10px; }
+
+  /* 항공편 카드 (네이버 스타일) */
+  .card-list { display: flex; flex-direction: column; gap: 10px; }
+  .fcard {
+    background: #fff; border: 1px solid #e5e9f0; border-radius: 14px;
+    padding: 14px 16px; box-shadow: 0 1px 4px rgba(0,0,0,.04);
   }
-  .record-title { font-size: 13px; color: #64748b; font-weight: 600; }
-  .record-price { font-size: 38px; font-weight: 800; color: #dc2626; margin: 6px 0; }
-  .record-sub { font-size: 13px; color: #475569; }
-  .record-meta { font-size: 13px; color: #334155; margin-top: 10px; line-height: 1.6; }
-  .book-btn {
-    display: inline-block; margin-top: 14px; padding: 12px 20px;
-    background: #16a34a; color: #fff; text-decoration: none;
-    border-radius: 10px; font-weight: 700; font-size: 15px;
+  .fcard.record { border: 2px solid #2563eb; box-shadow: 0 3px 14px rgba(37,99,235,.14); }
+  .fcard-head {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 8px;
   }
+  .fdate { font-size: 13px; font-weight: 700; color: #334155; }
+  .badge-best {
+    background: #dc2626; color: #fff; font-size: 11px; font-weight: 700;
+    padding: 3px 9px; border-radius: 20px;
+  }
+  /* 가는/오는 편 한 줄 */
+  .legs { border-top: 1px solid #f1f5f9; }
+  .leg {
+    display: flex; align-items: center; flex-wrap: wrap; gap: 8px;
+    padding: 9px 0; border-bottom: 1px solid #f1f5f9;
+  }
+  .leg-tag {
+    flex: 0 0 auto; font-size: 11px; font-weight: 700; color: #fff;
+    padding: 3px 8px; border-radius: 6px;
+  }
+  .leg-tag.out { background: #2563eb; }
+  .leg-tag.ret { background: #0891b2; }
+  .leg-air { font-size: 13px; color: #475569; min-width: 62px; }
+  .leg-route { font-size: 15px; color: #111827; }
+  .leg-route b { font-size: 16px; }
+  .leg-route .arw { color: #94a3b8; margin: 0 2px; }
+  .leg-dur { font-size: 12px; color: #94a3b8; margin-left: auto; }
+  /* 가격 + 예약 버튼 */
+  .fcard-foot {
+    display: flex; justify-content: space-between; align-items: flex-end;
+    margin-top: 10px;
+  }
+  .fprice b { display: block; font-size: 22px; font-weight: 800; color: #dc2626; }
+  .fprice span { font-size: 12px; color: #64748b; }
   .book-link {
-    display: inline-block; padding: 6px 12px; background: #16a34a;
-    color: #fff; text-decoration: none; border-radius: 8px;
-    font-weight: 700; font-size: 12px;
+    flex: 0 0 auto; padding: 10px 18px; background: #16a34a; color: #fff;
+    text-decoration: none; border-radius: 10px; font-weight: 700; font-size: 14px;
   }
-  table {
-    width: 100%; border-collapse: collapse; background: #fff;
-    border-radius: 12px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,.05);
-  }
-  th, td { padding: 10px 8px; text-align: center; font-size: 13px; border-bottom: 1px solid #eef2f6; }
-  th { background: #f8fafc; color: #64748b; font-size: 12px; }
-  td.rank { font-weight: 800; color: #2563eb; }
-  td.price { font-weight: 700; }
-  .ret, .air, .pp { font-size: 11px; color: #94a3b8; }
-  .tm { font-size: 11px; color: #2563eb; }
-  .down { color: #16a34a; font-weight: 700; }
-  .up { color: #dc2626; font-weight: 700; }
-  .new { color: #2563eb; font-weight: 700; font-size: 11px; }
-  .same { color: #94a3b8; }
+  /* 추이 배지 */
+  .down { background:#dcfce7; color:#16a34a; font-weight:700; font-size:11px; padding:3px 8px; border-radius:20px; }
+  .up { background:#fee2e2; color:#dc2626; font-weight:700; font-size:11px; padding:3px 8px; border-radius:20px; }
+  .new { background:#dbeafe; color:#2563eb; font-weight:700; font-size:11px; padding:3px 8px; border-radius:20px; }
+  .same { color:#94a3b8; font-size:11px; }
   .empty { text-align: center; color: #94a3b8; padding: 40px 0; }
   footer { text-align: center; color: #94a3b8; font-size: 12px; padding: 20px; }
 </style>
@@ -66,505 +87,11 @@
 <body>
 <header>
   <h1>✈️ PUS ↔ NRT 왕복 직항 최저가</h1>
-  <p>성인 4명 · 이코노미 · 마지막 업데이트 2026-07-04 15:11:04 (KST)</p>
+  <p>성인 4명 · 이코노미 · 마지막 업데이트 2026-07-04 15:27:14 (KST)</p>
 </header>
 <div class="wrap">
   <div class="tabs"><button class="tab-btn active" onclick="showTab(0)" id="btn0">2박3일</button><button class="tab-btn " onclick="showTab(1)" id="btn1">3박4일</button></div>
-  <div class="tab-content active" id="tab0">
-    <div class="record-card">
-      <div class="record-title">역대 최저가 (2박3일) · 1인당</div>
-      <div class="record-price">528,200원</div>
-      <div class="record-sub">성인 4명 총액 2,112,800원</div>
-      <div class="record-meta">
-        PUS → NRT
-        · Jin Air<br>
-        출국 2027-01-26 / 귀국 2027-01-28
-      </div>
-      <a class="book-btn" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDEtMjYoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDEtMjgoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">✈️ 예약하러 가기 (구글 항공권)</a>
-    </div>
-    
-    <table>
-      <thead>
-        <tr>
-          <th>#</th><th>출국일 / 귀국일</th><th>출발/항공사</th>
-          <th>가격</th><th>추이</th><th>예약</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td class="rank">1</td>
-          <td>2027-01-26<br><span class="ret">↩ 2027-01-28</span></td>
-          <td>PUS<br><span class="air">Jin Air</span></td>
-          <td class="price">1인 528,200원<br><span class="pp">총 2,112,800</span></td>
-          <td class="trend"><span class="same">–</span></td>
-          <td><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDEtMjYoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDEtMjgoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></td>
-        </tr>
-        
-        <tr>
-          <td class="rank">2</td>
-          <td>2027-01-30<br><span class="ret">↩ 2027-02-01</span></td>
-          <td>PUS<br><span class="air">Korean Air</span></td>
-          <td class="price">1인 542,800원<br><span class="pp">총 2,171,200</span></td>
-          <td class="trend"><span class="new">NEW</span></td>
-          <td><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDEtMzAoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDItMDEoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></td>
-        </tr>
-        
-        <tr>
-          <td class="rank">3</td>
-          <td>2027-02-03<br><span class="ret">↩ 2027-02-05</span></td>
-          <td>PUS<br><span class="air">Korean Air</span></td>
-          <td class="price">1인 542,800원<br><span class="pp">총 2,171,200</span></td>
-          <td class="trend"><span class="new">NEW</span></td>
-          <td><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDItMDMoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDItMDUoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></td>
-        </tr>
-        
-        <tr>
-          <td class="rank">4</td>
-          <td>2027-02-17<br><span class="ret">↩ 2027-02-19</span></td>
-          <td>PUS<br><span class="air">Korean Air</span></td>
-          <td class="price">1인 542,800원<br><span class="pp">총 2,171,200</span></td>
-          <td class="trend"><span class="same">–</span></td>
-          <td><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDItMTcoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDItMTkoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></td>
-        </tr>
-        
-        <tr>
-          <td class="rank">5</td>
-          <td>2027-01-27<br><span class="ret">↩ 2027-01-29</span></td>
-          <td>PUS<br><span class="air">Korean Air</span></td>
-          <td class="price">1인 542,800원<br><span class="pp">총 2,171,200</span></td>
-          <td class="trend"><span class="new">NEW</span></td>
-          <td><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDEtMjcoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDEtMjkoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></td>
-        </tr>
-        
-        <tr>
-          <td class="rank">6</td>
-          <td>2027-02-16<br><span class="ret">↩ 2027-02-18</span></td>
-          <td>PUS<br><span class="air">Korean Air</span><br><span class="tm">가는 편 오후 4:20 → 오후 6:30</span></td>
-          <td class="price">1인 542,800원<br><span class="pp">총 2,171,200</span></td>
-          <td class="trend"><span class="same">–</span></td>
-          <td><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDItMTYoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDItMTgoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></td>
-        </tr>
-        
-        <tr>
-          <td class="rank">7</td>
-          <td>2027-02-20<br><span class="ret">↩ 2027-02-22</span></td>
-          <td>PUS<br><span class="air">Korean Air</span><br><span class="tm">가는 편 오후 4:20 → 오후 6:30</span></td>
-          <td class="price">1인 543,000원<br><span class="pp">총 2,172,000</span></td>
-          <td class="trend"><span class="same">–</span></td>
-          <td><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDItMjAoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDItMjIoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></td>
-        </tr>
-        
-        <tr>
-          <td class="rank">8</td>
-          <td>2027-01-25<br><span class="ret">↩ 2027-01-27</span></td>
-          <td>PUS<br><span class="air">Jin Air</span></td>
-          <td class="price">1인 543,200원<br><span class="pp">총 2,172,800</span></td>
-          <td class="trend"><span class="new">NEW</span></td>
-          <td><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDEtMjUoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDEtMjcoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></td>
-        </tr>
-        
-        <tr>
-          <td class="rank">9</td>
-          <td>2027-02-02<br><span class="ret">↩ 2027-02-04</span></td>
-          <td>PUS<br><span class="air">Jin Air</span></td>
-          <td class="price">1인 543,200원<br><span class="pp">총 2,172,800</span></td>
-          <td class="trend"><span class="new">NEW</span></td>
-          <td><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDItMDIoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDItMDQoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></td>
-        </tr>
-        
-        <tr>
-          <td class="rank">10</td>
-          <td>2027-02-21<br><span class="ret">↩ 2027-02-23</span></td>
-          <td>PUS<br><span class="air">Jin Air</span><br><span class="tm">가는 편 오전 9:30 → 오후 12:00</span></td>
-          <td class="price">1인 557,700원<br><span class="pp">총 2,230,800</span></td>
-          <td class="trend"><span class="same">–</span></td>
-          <td><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDItMjEoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDItMjMoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></td>
-        </tr>
-        
-        <tr>
-          <td class="rank">11</td>
-          <td>2027-01-31<br><span class="ret">↩ 2027-02-02</span></td>
-          <td>PUS<br><span class="air">Jin Air</span></td>
-          <td class="price">1인 558,200원<br><span class="pp">총 2,232,800</span></td>
-          <td class="trend"><span class="new">NEW</span></td>
-          <td><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDEtMzEoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDItMDIoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></td>
-        </tr>
-        
-        <tr>
-          <td class="rank">12</td>
-          <td>2027-02-01<br><span class="ret">↩ 2027-02-03</span></td>
-          <td>PUS<br><span class="air">Jin Air</span><br><span class="tm">가는 편 오전 9:30 → 오후 12:00</span></td>
-          <td class="price">1인 558,200원<br><span class="pp">총 2,232,800</span></td>
-          <td class="trend"><span class="same">–</span></td>
-          <td><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDItMDEoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDItMDMoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></td>
-        </tr>
-        
-        <tr>
-          <td class="rank">13</td>
-          <td>2027-01-29<br><span class="ret">↩ 2027-01-31</span></td>
-          <td>PUS<br><span class="air">Jin Air</span></td>
-          <td class="price">1인 568,200원<br><span class="pp">총 2,272,800</span></td>
-          <td class="trend"><span class="new">NEW</span></td>
-          <td><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDEtMjkoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDEtMzEoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></td>
-        </tr>
-        
-        <tr>
-          <td class="rank">14</td>
-          <td>2027-02-10<br><span class="ret">↩ 2027-02-12</span></td>
-          <td>PUS<br><span class="air">Korean Air</span></td>
-          <td class="price">1인 597,800원<br><span class="pp">총 2,391,200</span></td>
-          <td class="trend"><span class="new">NEW</span></td>
-          <td><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDItMTAoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDItMTIoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></td>
-        </tr>
-        
-        <tr>
-          <td class="rank">15</td>
-          <td>2027-02-15<br><span class="ret">↩ 2027-02-17</span></td>
-          <td>PUS<br><span class="air">Korean Air</span></td>
-          <td class="price">1인 607,800원<br><span class="pp">총 2,431,200</span></td>
-          <td class="trend"><span class="new">NEW</span></td>
-          <td><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDItMTUoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDItMTcoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></td>
-        </tr>
-        
-        <tr>
-          <td class="rank">16</td>
-          <td>2027-02-11<br><span class="ret">↩ 2027-02-13</span></td>
-          <td>PUS<br><span class="air">Jin Air</span><br><span class="tm">가는 편 오전 9:30 → 오후 12:00</span></td>
-          <td class="price">1인 608,200원<br><span class="pp">총 2,432,800</span></td>
-          <td class="trend"><span class="same">–</span></td>
-          <td><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDItMTEoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDItMTMoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></td>
-        </tr>
-        
-        <tr>
-          <td class="rank">17</td>
-          <td>2027-02-13<br><span class="ret">↩ 2027-02-15</span></td>
-          <td>PUS<br><span class="air">Korean Air</span></td>
-          <td class="price">1인 627,800원<br><span class="pp">총 2,511,200</span></td>
-          <td class="trend"><span class="same">–</span></td>
-          <td><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDItMTMoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDItMTUoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></td>
-        </tr>
-        
-        <tr>
-          <td class="rank">18</td>
-          <td>2027-02-14<br><span class="ret">↩ 2027-02-16</span></td>
-          <td>PUS<br><span class="air">Korean Air</span><br><span class="tm">가는 편 오전 9:25 → 오전 11:35</span></td>
-          <td class="price">1인 627,800원<br><span class="pp">총 2,511,200</span></td>
-          <td class="trend"><span class="new">NEW</span></td>
-          <td><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDItMTQoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDItMTYoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></td>
-        </tr>
-        
-        <tr>
-          <td class="rank">19</td>
-          <td>2027-02-18<br><span class="ret">↩ 2027-02-20</span></td>
-          <td>PUS<br><span class="air">Korean Air</span></td>
-          <td class="price">1인 637,800원<br><span class="pp">총 2,551,200</span></td>
-          <td class="trend"><span class="new">NEW</span></td>
-          <td><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDItMTgoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDItMjAoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></td>
-        </tr>
-        
-        <tr>
-          <td class="rank">20</td>
-          <td>2027-02-19<br><span class="ret">↩ 2027-02-21</span></td>
-          <td>PUS<br><span class="air">Korean Air</span><br><span class="tm">가는 편 오후 4:20 → 오후 6:30</span></td>
-          <td class="price">1인 638,000원<br><span class="pp">총 2,552,000</span></td>
-          <td class="trend"><span class="same">–</span></td>
-          <td><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDItMTkoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDItMjEoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></td>
-        </tr>
-        
-        <tr>
-          <td class="rank">21</td>
-          <td>2027-02-12<br><span class="ret">↩ 2027-02-14</span></td>
-          <td>PUS<br><span class="air">Jin Air</span><br><span class="tm">가는 편 오전 9:30 → 오후 12:00</span></td>
-          <td class="price">1인 638,200원<br><span class="pp">총 2,552,800</span></td>
-          <td class="trend"><span class="same">–</span></td>
-          <td><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDItMTIoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDItMTQoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></td>
-        </tr>
-        
-        <tr>
-          <td class="rank">22</td>
-          <td>2027-02-04<br><span class="ret">↩ 2027-02-06</span></td>
-          <td>PUS<br><span class="air">Korean Air</span></td>
-          <td class="price">1인 642,800원<br><span class="pp">총 2,571,200</span></td>
-          <td class="trend"><span class="new">NEW</span></td>
-          <td><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDItMDQoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDItMDYoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></td>
-        </tr>
-        
-        <tr>
-          <td class="rank">23</td>
-          <td>2027-02-08<br><span class="ret">↩ 2027-02-10</span></td>
-          <td>PUS<br><span class="air">Korean Air</span></td>
-          <td class="price">1인 667,800원<br><span class="pp">총 2,671,200</span></td>
-          <td class="trend"><span class="new">NEW</span></td>
-          <td><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDItMDgoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDItMTAoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></td>
-        </tr>
-        
-        <tr>
-          <td class="rank">24</td>
-          <td>2027-02-05<br><span class="ret">↩ 2027-02-07</span></td>
-          <td>PUS<br><span class="air">Korean Air</span></td>
-          <td class="price">1인 712,900원<br><span class="pp">총 2,851,600</span></td>
-          <td class="trend"><span class="same">–</span></td>
-          <td><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDItMDUoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDItMDcoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></td>
-        </tr>
-        
-        <tr>
-          <td class="rank">25</td>
-          <td>2027-02-07<br><span class="ret">↩ 2027-02-09</span></td>
-          <td>PUS<br><span class="air">Jin Air</span></td>
-          <td class="price">1인 783,200원<br><span class="pp">총 3,132,800</span></td>
-          <td class="trend"><span class="new">NEW</span></td>
-          <td><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDItMDcoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDItMDkoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></td>
-        </tr>
-        </tbody>
-    </table>
-    </div><div class="tab-content " id="tab1">
-    <div class="record-card">
-      <div class="record-title">역대 최저가 (3박4일) · 1인당</div>
-      <div class="record-price">542,800원</div>
-      <div class="record-sub">성인 4명 총액 2,171,200원</div>
-      <div class="record-meta">
-        PUS → NRT
-        · Korean Air<br>
-        출국 2027-01-27 / 귀국 2027-01-30
-      </div>
-      <a class="book-btn" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDEtMjcoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDEtMzAoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">✈️ 예약하러 가기 (구글 항공권)</a>
-    </div>
-    
-    <table>
-      <thead>
-        <tr>
-          <th>#</th><th>출국일 / 귀국일</th><th>출발/항공사</th>
-          <th>가격</th><th>추이</th><th>예약</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td class="rank">1</td>
-          <td>2027-01-27<br><span class="ret">↩ 2027-01-30</span></td>
-          <td>PUS<br><span class="air">Korean Air</span></td>
-          <td class="price">1인 542,800원<br><span class="pp">총 2,171,200</span></td>
-          <td class="trend"><span class="same">–</span></td>
-          <td><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDEtMjcoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDEtMzAoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></td>
-        </tr>
-        
-        <tr>
-          <td class="rank">2</td>
-          <td>2027-01-30<br><span class="ret">↩ 2027-02-02</span></td>
-          <td>PUS<br><span class="air">Korean Air</span></td>
-          <td class="price">1인 542,800원<br><span class="pp">총 2,171,200</span></td>
-          <td class="trend"><span class="new">NEW</span></td>
-          <td><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDEtMzAoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDItMDIoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></td>
-        </tr>
-        
-        <tr>
-          <td class="rank">3</td>
-          <td>2027-02-16<br><span class="ret">↩ 2027-02-19</span></td>
-          <td>PUS<br><span class="air">Korean Air</span></td>
-          <td class="price">1인 542,800원<br><span class="pp">총 2,171,200</span></td>
-          <td class="trend"><span class="new">NEW</span></td>
-          <td><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDItMTYoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDItMTkoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></td>
-        </tr>
-        
-        <tr>
-          <td class="rank">4</td>
-          <td>2027-01-29<br><span class="ret">↩ 2027-02-01</span></td>
-          <td>PUS<br><span class="air">Korean Air</span></td>
-          <td class="price">1인 542,800원<br><span class="pp">총 2,171,200</span></td>
-          <td class="trend"><span class="new">NEW</span></td>
-          <td><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDEtMjkoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDItMDEoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></td>
-        </tr>
-        
-        <tr>
-          <td class="rank">5</td>
-          <td>2027-02-03<br><span class="ret">↩ 2027-02-06</span></td>
-          <td>PUS<br><span class="air">Korean Air</span><br><span class="tm">가는 편 오후 4:20 → 오후 6:30</span></td>
-          <td class="price">1인 542,800원<br><span class="pp">총 2,171,200</span></td>
-          <td class="trend"><span class="same">–</span></td>
-          <td><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDItMDMoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDItMDYoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></td>
-        </tr>
-        
-        <tr>
-          <td class="rank">6</td>
-          <td>2027-02-12<br><span class="ret">↩ 2027-02-15</span></td>
-          <td>PUS<br><span class="air">Korean Air</span></td>
-          <td class="price">1인 542,800원<br><span class="pp">총 2,171,200</span></td>
-          <td class="trend"><span class="new">NEW</span></td>
-          <td><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDItMTIoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDItMTUoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></td>
-        </tr>
-        
-        <tr>
-          <td class="rank">7</td>
-          <td>2027-02-20<br><span class="ret">↩ 2027-02-23</span></td>
-          <td>PUS<br><span class="air">Korean Air</span></td>
-          <td class="price">1인 543,000원<br><span class="pp">총 2,172,000</span></td>
-          <td class="trend"><span class="new">NEW</span></td>
-          <td><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDItMjAoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDItMjMoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></td>
-        </tr>
-        
-        <tr>
-          <td class="rank">8</td>
-          <td>2027-02-19<br><span class="ret">↩ 2027-02-22</span></td>
-          <td>PUS<br><span class="air">Korean Air</span><br><span class="tm">가는 편 오후 4:20 → 오후 6:30</span></td>
-          <td class="price">1인 543,000원<br><span class="pp">총 2,172,000</span></td>
-          <td class="trend"><span class="same">–</span></td>
-          <td><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDItMTkoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDItMjIoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></td>
-        </tr>
-        
-        <tr>
-          <td class="rank">9</td>
-          <td>2027-01-28<br><span class="ret">↩ 2027-01-31</span></td>
-          <td>PUS<br><span class="air">Jin Air</span></td>
-          <td class="price">1인 553,200원<br><span class="pp">총 2,212,800</span></td>
-          <td class="trend"><span class="new">NEW</span></td>
-          <td><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDEtMjgoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDEtMzEoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></td>
-        </tr>
-        
-        <tr>
-          <td class="rank">10</td>
-          <td>2027-02-21<br><span class="ret">↩ 2027-02-24</span></td>
-          <td>PUS<br><span class="air">Jin Air</span><br><span class="tm">가는 편 오전 9:30 → 오후 12:00</span></td>
-          <td class="price">1인 557,700원<br><span class="pp">총 2,230,800</span></td>
-          <td class="trend"><span class="new">NEW</span></td>
-          <td><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDItMjEoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDItMjQoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></td>
-        </tr>
-        
-        <tr>
-          <td class="rank">11</td>
-          <td>2027-02-01<br><span class="ret">↩ 2027-02-04</span></td>
-          <td>PUS<br><span class="air">Jin Air</span></td>
-          <td class="price">1인 558,200원<br><span class="pp">총 2,232,800</span></td>
-          <td class="trend"><span class="new">NEW</span></td>
-          <td><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDItMDEoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDItMDQoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></td>
-        </tr>
-        
-        <tr>
-          <td class="rank">12</td>
-          <td>2027-01-31<br><span class="ret">↩ 2027-02-03</span></td>
-          <td>PUS<br><span class="air">Jin Air</span><br><span class="tm">가는 편 오전 9:30 → 오후 12:00</span></td>
-          <td class="price">1인 558,200원<br><span class="pp">총 2,232,800</span></td>
-          <td class="trend"><span class="new">NEW</span></td>
-          <td><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDEtMzEoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDItMDMoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></td>
-        </tr>
-        
-        <tr>
-          <td class="rank">13</td>
-          <td>2027-02-02<br><span class="ret">↩ 2027-02-05</span></td>
-          <td>PUS<br><span class="air">Korean Air</span><br><span class="tm">가는 편 오후 4:20 → 오후 6:30</span></td>
-          <td class="price">1인 577,800원<br><span class="pp">총 2,311,200</span></td>
-          <td class="trend"><span class="same">–</span></td>
-          <td><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDItMDIoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDItMDUoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></td>
-        </tr>
-        
-        <tr>
-          <td class="rank">14</td>
-          <td>2027-02-09<br><span class="ret">↩ 2027-02-12</span></td>
-          <td>PUS<br><span class="air">Korean Air</span><br><span class="tm">가는 편 오후 4:20 → 오후 6:30</span></td>
-          <td class="price">1인 597,800원<br><span class="pp">총 2,391,200</span></td>
-          <td class="trend"><span class="same">–</span></td>
-          <td><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDItMDkoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDItMTIoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></td>
-        </tr>
-        
-        <tr>
-          <td class="rank">15</td>
-          <td>2027-02-13<br><span class="ret">↩ 2027-02-16</span></td>
-          <td>PUS<br><span class="air">Korean Air</span><br><span class="tm">가는 편 오전 9:25 → 오전 11:35</span></td>
-          <td class="price">1인 627,800원<br><span class="pp">총 2,511,200</span></td>
-          <td class="trend"><span class="same">–</span></td>
-          <td><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDItMTMoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDItMTYoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></td>
-        </tr>
-        
-        <tr>
-          <td class="rank">16</td>
-          <td>2027-02-14<br><span class="ret">↩ 2027-02-17</span></td>
-          <td>PUS<br><span class="air">Korean Air</span></td>
-          <td class="price">1인 627,800원<br><span class="pp">총 2,511,200</span></td>
-          <td class="trend"><span class="same">–</span></td>
-          <td><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDItMTQoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDItMTcoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></td>
-        </tr>
-        
-        <tr>
-          <td class="rank">17</td>
-          <td>2027-02-17<br><span class="ret">↩ 2027-02-20</span></td>
-          <td>PUS<br><span class="air">Korean Air</span><br><span class="tm">가는 편 오후 4:20 → 오후 6:30</span></td>
-          <td class="price">1인 637,800원<br><span class="pp">총 2,551,200</span></td>
-          <td class="trend"><span class="same">–</span></td>
-          <td><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDItMTcoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDItMjAoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></td>
-        </tr>
-        
-        <tr>
-          <td class="rank">18</td>
-          <td>2027-02-18<br><span class="ret">↩ 2027-02-21</span></td>
-          <td>PUS<br><span class="air">Korean Air</span><br><span class="tm">가는 편 오후 4:20 → 오후 6:30</span></td>
-          <td class="price">1인 637,800원<br><span class="pp">총 2,551,200</span></td>
-          <td class="trend"><span class="new">NEW</span></td>
-          <td><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDItMTgoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDItMjEoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></td>
-        </tr>
-        
-        <tr>
-          <td class="rank">19</td>
-          <td>2027-02-11<br><span class="ret">↩ 2027-02-14</span></td>
-          <td>PUS<br><span class="air">Jin Air</span></td>
-          <td class="price">1인 638,200원<br><span class="pp">총 2,552,800</span></td>
-          <td class="trend"><span class="new">NEW</span></td>
-          <td><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDItMTEoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDItMTQoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></td>
-        </tr>
-        
-        <tr>
-          <td class="rank">20</td>
-          <td>2027-02-08<br><span class="ret">↩ 2027-02-11</span></td>
-          <td>PUS<br><span class="air">Korean Air</span></td>
-          <td class="price">1인 652,800원<br><span class="pp">총 2,611,200</span></td>
-          <td class="trend"><span class="same">–</span></td>
-          <td><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDItMDgoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDItMTEoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></td>
-        </tr>
-        
-        <tr>
-          <td class="rank">21</td>
-          <td>2027-02-04<br><span class="ret">↩ 2027-02-07</span></td>
-          <td>PUS<br><span class="air">Korean Air</span><br><span class="tm">가는 편 오전 9:25 → 오전 11:35</span></td>
-          <td class="price">1인 682,800원<br><span class="pp">총 2,731,200</span></td>
-          <td class="trend"><span class="same">–</span></td>
-          <td><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDItMDQoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDItMDcoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></td>
-        </tr>
-        
-        <tr>
-          <td class="rank">22</td>
-          <td>2027-02-10<br><span class="ret">↩ 2027-02-13</span></td>
-          <td>PUS<br><span class="air">Korean Air</span><br><span class="tm">가는 편 오후 4:20 → 오후 6:30</span></td>
-          <td class="price">1인 682,900원<br><span class="pp">총 2,731,600</span></td>
-          <td class="trend"><span class="same">–</span></td>
-          <td><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDItMTAoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDItMTMoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></td>
-        </tr>
-        
-        <tr>
-          <td class="rank">23</td>
-          <td>2027-02-07<br><span class="ret">↩ 2027-02-10</span></td>
-          <td>PUS<br><span class="air">Korean Air</span><br><span class="tm">가는 편 오전 9:25 → 오전 11:35</span></td>
-          <td class="price">1인 762,900원<br><span class="pp">총 3,051,600</span></td>
-          <td class="trend"><span class="same">–</span></td>
-          <td><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDItMDcoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDItMTAoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></td>
-        </tr>
-        
-        <tr>
-          <td class="rank">24</td>
-          <td>2027-02-05<br><span class="ret">↩ 2027-02-08</span></td>
-          <td>PUS<br><span class="air">Jin Air</span><br><span class="tm">가는 편 오전 9:30 → 오후 12:00</span></td>
-          <td class="price">1인 783,200원<br><span class="pp">총 3,132,800</span></td>
-          <td class="trend"><span class="same">–</span></td>
-          <td><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDItMDUoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDItMDgoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></td>
-        </tr>
-        
-        <tr>
-          <td class="rank">25</td>
-          <td>2027-02-06<br><span class="ret">↩ 2027-02-09</span></td>
-          <td>PUS<br><span class="air">Jin Air</span></td>
-          <td class="price">1인 783,200원<br><span class="pp">총 3,132,800</span></td>
-          <td class="trend"><span class="new">NEW</span></td>
-          <td><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDItMDYoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDItMDkoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></td>
-        </tr>
-        </tbody>
-    </table>
-    </div>
+  <div class="tab-content active" id="tab0"><div class="record-wrap"><div class="record-title">🏆 역대 최저가 (2박3일)</div><div class="fcard record"><div class="fcard-head"><span class="fdate">2027-01-26 ~ 2027-01-28</span><span class="badge-best">최저가</span></div><div class="legs"><div class="leg"><span class="leg-tag out">가는 편</span><span class="leg-air">-</span><span class="leg-route">PUS → NRT</span></div><div class="leg"><span class="leg-tag ret">오는 편</span><span class="leg-air">-</span><span class="leg-route">NRT → PUS</span></div></div><div class="fcard-foot"><div class="fprice"><b>1인 528,200원</b><span>성인 4명 총 2,112,800원</span></div><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDEtMjYoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDEtMjgoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></div></div></div><div class="list-title">전체 날짜 순위 (싼 순)</div><div class="card-list"><div class="fcard "><div class="fcard-head"><span class="fdate">2027-01-26 ~ 2027-01-28</span><span class="same">–</span></div><div class="legs"><div class="leg"><span class="leg-tag out">가는 편</span><span class="leg-air">-</span><span class="leg-route">PUS → NRT</span></div><div class="leg"><span class="leg-tag ret">오는 편</span><span class="leg-air">-</span><span class="leg-route">NRT → PUS</span></div></div><div class="fcard-foot"><div class="fprice"><b>1인 528,200원</b><span>성인 4명 총 2,112,800원</span></div><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDEtMjYoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDEtMjgoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></div></div><div class="fcard "><div class="fcard-head"><span class="fdate">2027-01-30 ~ 2027-02-01</span><span class="new">NEW</span></div><div class="legs"><div class="leg"><span class="leg-tag out">가는 편</span><span class="leg-air">-</span><span class="leg-route">PUS → NRT</span></div><div class="leg"><span class="leg-tag ret">오는 편</span><span class="leg-air">-</span><span class="leg-route">NRT → PUS</span></div></div><div class="fcard-foot"><div class="fprice"><b>1인 542,800원</b><span>성인 4명 총 2,171,200원</span></div><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDEtMzAoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDItMDEoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></div></div><div class="fcard "><div class="fcard-head"><span class="fdate">2027-02-17 ~ 2027-02-19</span><span class="same">–</span></div><div class="legs"><div class="leg"><span class="leg-tag out">가는 편</span><span class="leg-air">-</span><span class="leg-route">PUS → NRT</span></div><div class="leg"><span class="leg-tag ret">오는 편</span><span class="leg-air">-</span><span class="leg-route">NRT → PUS</span></div></div><div class="fcard-foot"><div class="fprice"><b>1인 542,800원</b><span>성인 4명 총 2,171,200원</span></div><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDItMTcoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDItMTkoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></div></div><div class="fcard "><div class="fcard-head"><span class="fdate">2027-02-16 ~ 2027-02-18</span><span class="same">–</span></div><div class="legs"><div class="leg"><span class="leg-tag out">가는 편</span><span class="leg-air">-</span><span class="leg-route"><b>오후 4:20</b> PUS <span class="arw">→</span> <b>오후 6:30</b> NRT</span></div><div class="leg"><span class="leg-tag ret">오는 편</span><span class="leg-air">-</span><span class="leg-route">NRT → PUS</span></div></div><div class="fcard-foot"><div class="fprice"><b>1인 542,800원</b><span>성인 4명 총 2,171,200원</span></div><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDItMTYoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDItMTgoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></div></div><div class="fcard "><div class="fcard-head"><span class="fdate">2027-02-20 ~ 2027-02-22</span><span class="same">–</span></div><div class="legs"><div class="leg"><span class="leg-tag out">가는 편</span><span class="leg-air">-</span><span class="leg-route"><b>오후 4:20</b> PUS <span class="arw">→</span> <b>오후 6:30</b> NRT</span></div><div class="leg"><span class="leg-tag ret">오는 편</span><span class="leg-air">-</span><span class="leg-route">NRT → PUS</span></div></div><div class="fcard-foot"><div class="fprice"><b>1인 543,000원</b><span>성인 4명 총 2,172,000원</span></div><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDItMjAoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDItMjIoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></div></div><div class="fcard "><div class="fcard-head"><span class="fdate">2027-01-25 ~ 2027-01-27</span><span class="new">NEW</span></div><div class="legs"><div class="leg"><span class="leg-tag out">가는 편</span><span class="leg-air">-</span><span class="leg-route">PUS → NRT</span></div><div class="leg"><span class="leg-tag ret">오는 편</span><span class="leg-air">-</span><span class="leg-route">NRT → PUS</span></div></div><div class="fcard-foot"><div class="fprice"><b>1인 543,200원</b><span>성인 4명 총 2,172,800원</span></div><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDEtMjUoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDEtMjcoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></div></div><div class="fcard "><div class="fcard-head"><span class="fdate">2027-02-21 ~ 2027-02-23</span><span class="same">–</span></div><div class="legs"><div class="leg"><span class="leg-tag out">가는 편</span><span class="leg-air">-</span><span class="leg-route"><b>오전 9:30</b> PUS <span class="arw">→</span> <b>오후 12:00</b> NRT</span></div><div class="leg"><span class="leg-tag ret">오는 편</span><span class="leg-air">-</span><span class="leg-route">NRT → PUS</span></div></div><div class="fcard-foot"><div class="fprice"><b>1인 557,700원</b><span>성인 4명 총 2,230,800원</span></div><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDItMjEoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDItMjMoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></div></div><div class="fcard "><div class="fcard-head"><span class="fdate">2027-01-31 ~ 2027-02-02</span><span class="new">NEW</span></div><div class="legs"><div class="leg"><span class="leg-tag out">가는 편</span><span class="leg-air">-</span><span class="leg-route">PUS → NRT</span></div><div class="leg"><span class="leg-tag ret">오는 편</span><span class="leg-air">-</span><span class="leg-route">NRT → PUS</span></div></div><div class="fcard-foot"><div class="fprice"><b>1인 558,200원</b><span>성인 4명 총 2,232,800원</span></div><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDEtMzEoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDItMDIoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></div></div><div class="fcard "><div class="fcard-head"><span class="fdate">2027-02-01 ~ 2027-02-03</span><span class="same">–</span></div><div class="legs"><div class="leg"><span class="leg-tag out">가는 편</span><span class="leg-air">-</span><span class="leg-route"><b>오전 9:30</b> PUS <span class="arw">→</span> <b>오후 12:00</b> NRT</span></div><div class="leg"><span class="leg-tag ret">오는 편</span><span class="leg-air">-</span><span class="leg-route">NRT → PUS</span></div></div><div class="fcard-foot"><div class="fprice"><b>1인 558,200원</b><span>성인 4명 총 2,232,800원</span></div><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDItMDEoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDItMDMoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></div></div><div class="fcard "><div class="fcard-head"><span class="fdate">2027-01-29 ~ 2027-01-31</span><span class="new">NEW</span></div><div class="legs"><div class="leg"><span class="leg-tag out">가는 편</span><span class="leg-air">-</span><span class="leg-route">PUS → NRT</span></div><div class="leg"><span class="leg-tag ret">오는 편</span><span class="leg-air">-</span><span class="leg-route">NRT → PUS</span></div></div><div class="fcard-foot"><div class="fprice"><b>1인 568,200원</b><span>성인 4명 총 2,272,800원</span></div><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDEtMjkoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDEtMzEoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></div></div><div class="fcard "><div class="fcard-head"><span class="fdate">2027-02-10 ~ 2027-02-12</span><span class="new">NEW</span></div><div class="legs"><div class="leg"><span class="leg-tag out">가는 편</span><span class="leg-air">-</span><span class="leg-route">PUS → NRT</span></div><div class="leg"><span class="leg-tag ret">오는 편</span><span class="leg-air">-</span><span class="leg-route">NRT → PUS</span></div></div><div class="fcard-foot"><div class="fprice"><b>1인 597,800원</b><span>성인 4명 총 2,391,200원</span></div><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDItMTAoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDItMTIoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></div></div><div class="fcard "><div class="fcard-head"><span class="fdate">2027-02-15 ~ 2027-02-17</span><span class="new">NEW</span></div><div class="legs"><div class="leg"><span class="leg-tag out">가는 편</span><span class="leg-air">-</span><span class="leg-route">PUS → NRT</span></div><div class="leg"><span class="leg-tag ret">오는 편</span><span class="leg-air">-</span><span class="leg-route">NRT → PUS</span></div></div><div class="fcard-foot"><div class="fprice"><b>1인 607,800원</b><span>성인 4명 총 2,431,200원</span></div><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDItMTUoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDItMTcoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></div></div><div class="fcard "><div class="fcard-head"><span class="fdate">2027-02-11 ~ 2027-02-13</span><span class="same">–</span></div><div class="legs"><div class="leg"><span class="leg-tag out">가는 편</span><span class="leg-air">-</span><span class="leg-route"><b>오전 9:30</b> PUS <span class="arw">→</span> <b>오후 12:00</b> NRT</span></div><div class="leg"><span class="leg-tag ret">오는 편</span><span class="leg-air">-</span><span class="leg-route">NRT → PUS</span></div></div><div class="fcard-foot"><div class="fprice"><b>1인 608,200원</b><span>성인 4명 총 2,432,800원</span></div><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDItMTEoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDItMTMoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></div></div><div class="fcard "><div class="fcard-head"><span class="fdate">2027-02-13 ~ 2027-02-15</span><span class="same">–</span></div><div class="legs"><div class="leg"><span class="leg-tag out">가는 편</span><span class="leg-air">-</span><span class="leg-route">PUS → NRT</span></div><div class="leg"><span class="leg-tag ret">오는 편</span><span class="leg-air">-</span><span class="leg-route">NRT → PUS</span></div></div><div class="fcard-foot"><div class="fprice"><b>1인 627,800원</b><span>성인 4명 총 2,511,200원</span></div><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDItMTMoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDItMTUoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></div></div><div class="fcard "><div class="fcard-head"><span class="fdate">2027-02-14 ~ 2027-02-16</span><span class="new">NEW</span></div><div class="legs"><div class="leg"><span class="leg-tag out">가는 편</span><span class="leg-air">-</span><span class="leg-route"><b>오전 9:25</b> PUS <span class="arw">→</span> <b>오전 11:35</b> NRT</span></div><div class="leg"><span class="leg-tag ret">오는 편</span><span class="leg-air">-</span><span class="leg-route">NRT → PUS</span></div></div><div class="fcard-foot"><div class="fprice"><b>1인 627,800원</b><span>성인 4명 총 2,511,200원</span></div><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDItMTQoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDItMTYoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></div></div><div class="fcard "><div class="fcard-head"><span class="fdate">2027-02-02 ~ 2027-02-04</span><span class="up">▲ 373,331</span></div><div class="legs"><div class="leg"><span class="leg-tag out">가는 편</span><span class="leg-air">Jin Air</span><span class="leg-route"><b>09:30</b> PUS <span class="arw">→</span> <b>12:00</b> NRT</span><span class="leg-dur">2시간 30분</span></div><div class="leg"><span class="leg-tag ret">오는 편</span><span class="leg-air">Jin Air</span><span class="leg-route"><b>11:45</b> NRT <span class="arw">→</span> <b>14:05</b> PUS</span><span class="leg-dur">2시간 20분</span></div></div><div class="fcard-foot"><div class="fprice"><b>1인 636,533원</b><span>성인 4명 총 2,546,131원</span></div><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDItMDIoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDItMDQoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></div></div><div class="fcard "><div class="fcard-head"><span class="fdate">2027-01-27 ~ 2027-01-29</span><span class="up">▲ 374,931</span></div><div class="legs"><div class="leg"><span class="leg-tag out">가는 편</span><span class="leg-air">Jin Air</span><span class="leg-route"><b>09:30</b> PUS <span class="arw">→</span> <b>12:00</b> NRT</span><span class="leg-dur">2시간 30분</span></div><div class="leg"><span class="leg-tag ret">오는 편</span><span class="leg-air">Jin Air</span><span class="leg-route"><b>11:45</b> NRT <span class="arw">→</span> <b>14:05</b> PUS</span><span class="leg-dur">2시간 20분</span></div></div><div class="fcard-foot"><div class="fprice"><b>1인 636,533원</b><span>성인 4명 총 2,546,131원</span></div><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDEtMjcoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDEtMjkoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></div></div><div class="fcard "><div class="fcard-head"><span class="fdate">2027-02-19 ~ 2027-02-21</span><span class="same">–</span></div><div class="legs"><div class="leg"><span class="leg-tag out">가는 편</span><span class="leg-air">-</span><span class="leg-route"><b>오후 4:20</b> PUS <span class="arw">→</span> <b>오후 6:30</b> NRT</span></div><div class="leg"><span class="leg-tag ret">오는 편</span><span class="leg-air">-</span><span class="leg-route">NRT → PUS</span></div></div><div class="fcard-foot"><div class="fprice"><b>1인 638,000원</b><span>성인 4명 총 2,552,000원</span></div><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDItMTkoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDItMjEoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></div></div><div class="fcard "><div class="fcard-head"><span class="fdate">2027-02-12 ~ 2027-02-14</span><span class="same">–</span></div><div class="legs"><div class="leg"><span class="leg-tag out">가는 편</span><span class="leg-air">-</span><span class="leg-route"><b>오전 9:30</b> PUS <span class="arw">→</span> <b>오후 12:00</b> NRT</span></div><div class="leg"><span class="leg-tag ret">오는 편</span><span class="leg-air">-</span><span class="leg-route">NRT → PUS</span></div></div><div class="fcard-foot"><div class="fprice"><b>1인 638,200원</b><span>성인 4명 총 2,552,800원</span></div><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDItMTIoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDItMTQoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></div></div><div class="fcard "><div class="fcard-head"><span class="fdate">2027-02-04 ~ 2027-02-06</span><span class="new">NEW</span></div><div class="legs"><div class="leg"><span class="leg-tag out">가는 편</span><span class="leg-air">-</span><span class="leg-route">PUS → NRT</span></div><div class="leg"><span class="leg-tag ret">오는 편</span><span class="leg-air">-</span><span class="leg-route">NRT → PUS</span></div></div><div class="fcard-foot"><div class="fprice"><b>1인 642,800원</b><span>성인 4명 총 2,571,200원</span></div><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDItMDQoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDItMDYoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></div></div><div class="fcard "><div class="fcard-head"><span class="fdate">2027-02-03 ~ 2027-02-05</span><span class="up">▲ 532,232</span></div><div class="legs"><div class="leg"><span class="leg-tag out">가는 편</span><span class="leg-air">Jin Air</span><span class="leg-route"><b>09:30</b> PUS <span class="arw">→</span> <b>12:00</b> NRT</span><span class="leg-dur">2시간 30분</span></div><div class="leg"><span class="leg-tag ret">오는 편</span><span class="leg-air">Korean Air</span><span class="leg-route"><b>12:45</b> NRT <span class="arw">→</span> <b>15:05</b> PUS</span><span class="leg-dur">2시간 20분</span></div></div><div class="fcard-foot"><div class="fprice"><b>1인 675,858원</b><span>성인 4명 총 2,703,432원</span></div><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDItMDMoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDItMDUoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></div></div><div class="fcard "><div class="fcard-head"><span class="fdate">2027-02-05 ~ 2027-02-07</span><span class="same">–</span></div><div class="legs"><div class="leg"><span class="leg-tag out">가는 편</span><span class="leg-air">-</span><span class="leg-route">PUS → NRT</span></div><div class="leg"><span class="leg-tag ret">오는 편</span><span class="leg-air">-</span><span class="leg-route">NRT → PUS</span></div></div><div class="fcard-foot"><div class="fprice"><b>1인 712,900원</b><span>성인 4명 총 2,851,600원</span></div><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDItMDUoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDItMDcoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></div></div><div class="fcard "><div class="fcard-head"><span class="fdate">2027-02-09 ~ 2027-02-11</span><span class="new">NEW</span></div><div class="legs"><div class="leg"><span class="leg-tag out">가는 편</span><span class="leg-air">Korean Air</span><span class="leg-route"><b>16:20</b> PUS <span class="arw">→</span> <b>18:30</b> NRT</span><span class="leg-dur">2시간 10분</span></div><div class="leg"><span class="leg-tag ret">오는 편</span><span class="leg-air">Korean Air</span><span class="leg-route"><b>12:45</b> NRT <span class="arw">→</span> <b>15:05</b> PUS</span><span class="leg-dur">2시간 20분</span></div></div><div class="fcard-foot"><div class="fprice"><b>1인 805,718원</b><span>성인 4명 총 3,222,872원</span></div><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDItMDkoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDItMTEoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></div></div><div class="fcard "><div class="fcard-head"><span class="fdate">2027-02-18 ~ 2027-02-20</span><span class="up">▲ 836,399</span></div><div class="legs"><div class="leg"><span class="leg-tag out">가는 편</span><span class="leg-air">Jin Air</span><span class="leg-route"><b>09:30</b> PUS <span class="arw">→</span> <b>12:00</b> NRT</span><span class="leg-dur">2시간 30분</span></div><div class="leg"><span class="leg-tag ret">오는 편</span><span class="leg-air">Jin Air</span><span class="leg-route"><b>11:45</b> NRT <span class="arw">→</span> <b>14:05</b> PUS</span><span class="leg-dur">2시간 20분</span></div></div><div class="fcard-foot"><div class="fprice"><b>1인 846,900원</b><span>성인 4명 총 3,387,599원</span></div><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDItMTgoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDItMjAoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></div></div><div class="fcard "><div class="fcard-head"><span class="fdate">2027-02-08 ~ 2027-02-10</span><span class="up">▲ 856,799</span></div><div class="legs"><div class="leg"><span class="leg-tag out">가는 편</span><span class="leg-air">Korean Air</span><span class="leg-route"><b>16:20</b> PUS <span class="arw">→</span> <b>18:30</b> NRT</span><span class="leg-dur">2시간 10분</span></div><div class="leg"><span class="leg-tag ret">오는 편</span><span class="leg-air">Jin Air</span><span class="leg-route"><b>11:45</b> NRT <span class="arw">→</span> <b>14:05</b> PUS</span><span class="leg-dur">2시간 20분</span></div></div><div class="fcard-foot"><div class="fprice"><b>1인 882,000원</b><span>성인 4명 총 3,527,999원</span></div><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDItMDgoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDItMTAoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></div></div><div class="fcard "><div class="fcard-head"><span class="fdate">2027-02-07 ~ 2027-02-09</span><span class="up">▲ 733,999</span></div><div class="legs"><div class="leg"><span class="leg-tag out">가는 편</span><span class="leg-air">Korean Air</span><span class="leg-route"><b>09:25</b> PUS <span class="arw">→</span> <b>11:35</b> NRT</span><span class="leg-dur">2시간 10분</span></div><div class="leg"><span class="leg-tag ret">오는 편</span><span class="leg-air">Jin Air</span><span class="leg-route"><b>11:45</b> NRT <span class="arw">→</span> <b>14:05</b> PUS</span><span class="leg-dur">2시간 20분</span></div></div><div class="fcard-foot"><div class="fprice"><b>1인 966,700원</b><span>성인 4명 총 3,866,799원</span></div><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDItMDcoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDItMDkoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></div></div></div></div><div class="tab-content " id="tab1"><div class="record-wrap"><div class="record-title">🏆 역대 최저가 (3박4일)</div><div class="fcard record"><div class="fcard-head"><span class="fdate">2027-01-27 ~ 2027-01-30</span><span class="badge-best">최저가</span></div><div class="legs"><div class="leg"><span class="leg-tag out">가는 편</span><span class="leg-air">-</span><span class="leg-route">PUS → NRT</span></div><div class="leg"><span class="leg-tag ret">오는 편</span><span class="leg-air">-</span><span class="leg-route">NRT → PUS</span></div></div><div class="fcard-foot"><div class="fprice"><b>1인 542,800원</b><span>성인 4명 총 2,171,200원</span></div><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDEtMjcoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDEtMzAoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></div></div></div><div class="list-title">전체 날짜 순위 (싼 순)</div><div class="card-list"><div class="fcard "><div class="fcard-head"><span class="fdate">2027-01-27 ~ 2027-01-30</span><span class="same">–</span></div><div class="legs"><div class="leg"><span class="leg-tag out">가는 편</span><span class="leg-air">-</span><span class="leg-route">PUS → NRT</span></div><div class="leg"><span class="leg-tag ret">오는 편</span><span class="leg-air">-</span><span class="leg-route">NRT → PUS</span></div></div><div class="fcard-foot"><div class="fprice"><b>1인 542,800원</b><span>성인 4명 총 2,171,200원</span></div><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDEtMjcoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDEtMzAoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></div></div><div class="fcard "><div class="fcard-head"><span class="fdate">2027-01-30 ~ 2027-02-02</span><span class="new">NEW</span></div><div class="legs"><div class="leg"><span class="leg-tag out">가는 편</span><span class="leg-air">-</span><span class="leg-route">PUS → NRT</span></div><div class="leg"><span class="leg-tag ret">오는 편</span><span class="leg-air">-</span><span class="leg-route">NRT → PUS</span></div></div><div class="fcard-foot"><div class="fprice"><b>1인 542,800원</b><span>성인 4명 총 2,171,200원</span></div><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDEtMzAoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDItMDIoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></div></div><div class="fcard "><div class="fcard-head"><span class="fdate">2027-02-16 ~ 2027-02-19</span><span class="new">NEW</span></div><div class="legs"><div class="leg"><span class="leg-tag out">가는 편</span><span class="leg-air">-</span><span class="leg-route">PUS → NRT</span></div><div class="leg"><span class="leg-tag ret">오는 편</span><span class="leg-air">-</span><span class="leg-route">NRT → PUS</span></div></div><div class="fcard-foot"><div class="fprice"><b>1인 542,800원</b><span>성인 4명 총 2,171,200원</span></div><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDItMTYoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDItMTkoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></div></div><div class="fcard "><div class="fcard-head"><span class="fdate">2027-01-29 ~ 2027-02-01</span><span class="new">NEW</span></div><div class="legs"><div class="leg"><span class="leg-tag out">가는 편</span><span class="leg-air">-</span><span class="leg-route">PUS → NRT</span></div><div class="leg"><span class="leg-tag ret">오는 편</span><span class="leg-air">-</span><span class="leg-route">NRT → PUS</span></div></div><div class="fcard-foot"><div class="fprice"><b>1인 542,800원</b><span>성인 4명 총 2,171,200원</span></div><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDEtMjkoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDItMDEoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></div></div><div class="fcard "><div class="fcard-head"><span class="fdate">2027-02-03 ~ 2027-02-06</span><span class="same">–</span></div><div class="legs"><div class="leg"><span class="leg-tag out">가는 편</span><span class="leg-air">-</span><span class="leg-route"><b>오후 4:20</b> PUS <span class="arw">→</span> <b>오후 6:30</b> NRT</span></div><div class="leg"><span class="leg-tag ret">오는 편</span><span class="leg-air">-</span><span class="leg-route">NRT → PUS</span></div></div><div class="fcard-foot"><div class="fprice"><b>1인 542,800원</b><span>성인 4명 총 2,171,200원</span></div><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDItMDMoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDItMDYoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></div></div><div class="fcard "><div class="fcard-head"><span class="fdate">2027-02-12 ~ 2027-02-15</span><span class="new">NEW</span></div><div class="legs"><div class="leg"><span class="leg-tag out">가는 편</span><span class="leg-air">-</span><span class="leg-route">PUS → NRT</span></div><div class="leg"><span class="leg-tag ret">오는 편</span><span class="leg-air">-</span><span class="leg-route">NRT → PUS</span></div></div><div class="fcard-foot"><div class="fprice"><b>1인 542,800원</b><span>성인 4명 총 2,171,200원</span></div><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDItMTIoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDItMTUoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></div></div><div class="fcard "><div class="fcard-head"><span class="fdate">2027-02-20 ~ 2027-02-23</span><span class="new">NEW</span></div><div class="legs"><div class="leg"><span class="leg-tag out">가는 편</span><span class="leg-air">-</span><span class="leg-route">PUS → NRT</span></div><div class="leg"><span class="leg-tag ret">오는 편</span><span class="leg-air">-</span><span class="leg-route">NRT → PUS</span></div></div><div class="fcard-foot"><div class="fprice"><b>1인 543,000원</b><span>성인 4명 총 2,172,000원</span></div><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDItMjAoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDItMjMoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></div></div><div class="fcard "><div class="fcard-head"><span class="fdate">2027-02-19 ~ 2027-02-22</span><span class="same">–</span></div><div class="legs"><div class="leg"><span class="leg-tag out">가는 편</span><span class="leg-air">-</span><span class="leg-route"><b>오후 4:20</b> PUS <span class="arw">→</span> <b>오후 6:30</b> NRT</span></div><div class="leg"><span class="leg-tag ret">오는 편</span><span class="leg-air">-</span><span class="leg-route">NRT → PUS</span></div></div><div class="fcard-foot"><div class="fprice"><b>1인 543,000원</b><span>성인 4명 총 2,172,000원</span></div><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDItMTkoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDItMjIoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></div></div><div class="fcard "><div class="fcard-head"><span class="fdate">2027-01-28 ~ 2027-01-31</span><span class="new">NEW</span></div><div class="legs"><div class="leg"><span class="leg-tag out">가는 편</span><span class="leg-air">-</span><span class="leg-route">PUS → NRT</span></div><div class="leg"><span class="leg-tag ret">오는 편</span><span class="leg-air">-</span><span class="leg-route">NRT → PUS</span></div></div><div class="fcard-foot"><div class="fprice"><b>1인 553,200원</b><span>성인 4명 총 2,212,800원</span></div><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDEtMjgoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDEtMzEoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></div></div><div class="fcard "><div class="fcard-head"><span class="fdate">2027-02-21 ~ 2027-02-24</span><span class="new">NEW</span></div><div class="legs"><div class="leg"><span class="leg-tag out">가는 편</span><span class="leg-air">-</span><span class="leg-route"><b>오전 9:30</b> PUS <span class="arw">→</span> <b>오후 12:00</b> NRT</span></div><div class="leg"><span class="leg-tag ret">오는 편</span><span class="leg-air">-</span><span class="leg-route">NRT → PUS</span></div></div><div class="fcard-foot"><div class="fprice"><b>1인 557,700원</b><span>성인 4명 총 2,230,800원</span></div><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDItMjEoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDItMjQoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></div></div><div class="fcard "><div class="fcard-head"><span class="fdate">2027-01-31 ~ 2027-02-03</span><span class="new">NEW</span></div><div class="legs"><div class="leg"><span class="leg-tag out">가는 편</span><span class="leg-air">-</span><span class="leg-route"><b>오전 9:30</b> PUS <span class="arw">→</span> <b>오후 12:00</b> NRT</span></div><div class="leg"><span class="leg-tag ret">오는 편</span><span class="leg-air">-</span><span class="leg-route">NRT → PUS</span></div></div><div class="fcard-foot"><div class="fprice"><b>1인 558,200원</b><span>성인 4명 총 2,232,800원</span></div><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDEtMzEoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDItMDMoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></div></div><div class="fcard "><div class="fcard-head"><span class="fdate">2027-02-13 ~ 2027-02-16</span><span class="same">–</span></div><div class="legs"><div class="leg"><span class="leg-tag out">가는 편</span><span class="leg-air">-</span><span class="leg-route"><b>오전 9:25</b> PUS <span class="arw">→</span> <b>오전 11:35</b> NRT</span></div><div class="leg"><span class="leg-tag ret">오는 편</span><span class="leg-air">-</span><span class="leg-route">NRT → PUS</span></div></div><div class="fcard-foot"><div class="fprice"><b>1인 627,800원</b><span>성인 4명 총 2,511,200원</span></div><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDItMTMoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDItMTYoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></div></div><div class="fcard "><div class="fcard-head"><span class="fdate">2027-02-14 ~ 2027-02-17</span><span class="same">–</span></div><div class="legs"><div class="leg"><span class="leg-tag out">가는 편</span><span class="leg-air">-</span><span class="leg-route">PUS → NRT</span></div><div class="leg"><span class="leg-tag ret">오는 편</span><span class="leg-air">-</span><span class="leg-route">NRT → PUS</span></div></div><div class="fcard-foot"><div class="fprice"><b>1인 627,800원</b><span>성인 4명 총 2,511,200원</span></div><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDItMTQoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDItMTcoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></div></div><div class="fcard "><div class="fcard-head"><span class="fdate">2027-02-18 ~ 2027-02-21</span><span class="new">NEW</span></div><div class="legs"><div class="leg"><span class="leg-tag out">가는 편</span><span class="leg-air">-</span><span class="leg-route"><b>오후 4:20</b> PUS <span class="arw">→</span> <b>오후 6:30</b> NRT</span></div><div class="leg"><span class="leg-tag ret">오는 편</span><span class="leg-air">-</span><span class="leg-route">NRT → PUS</span></div></div><div class="fcard-foot"><div class="fprice"><b>1인 637,800원</b><span>성인 4명 총 2,551,200원</span></div><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDItMTgoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDItMjEoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></div></div><div class="fcard "><div class="fcard-head"><span class="fdate">2027-02-11 ~ 2027-02-14</span><span class="new">NEW</span></div><div class="legs"><div class="leg"><span class="leg-tag out">가는 편</span><span class="leg-air">-</span><span class="leg-route">PUS → NRT</span></div><div class="leg"><span class="leg-tag ret">오는 편</span><span class="leg-air">-</span><span class="leg-route">NRT → PUS</span></div></div><div class="fcard-foot"><div class="fprice"><b>1인 638,200원</b><span>성인 4명 총 2,552,800원</span></div><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDItMTEoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDItMTQoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></div></div><div class="fcard "><div class="fcard-head"><span class="fdate">2027-02-01 ~ 2027-02-04</span><span class="up">▲ 393,331</span></div><div class="legs"><div class="leg"><span class="leg-tag out">가는 편</span><span class="leg-air">Jin Air</span><span class="leg-route"><b>09:30</b> PUS <span class="arw">→</span> <b>12:00</b> NRT</span><span class="leg-dur">2시간 30분</span></div><div class="leg"><span class="leg-tag ret">오는 편</span><span class="leg-air">Jin Air</span><span class="leg-route"><b>11:45</b> NRT <span class="arw">→</span> <b>14:05</b> PUS</span><span class="leg-dur">2시간 20분</span></div></div><div class="fcard-foot"><div class="fprice"><b>1인 656,533원</b><span>성인 4명 총 2,626,131원</span></div><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDItMDEoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDItMDQoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></div></div><div class="fcard "><div class="fcard-head"><span class="fdate">2027-02-02 ~ 2027-02-05</span><span class="up">▲ 392,232</span></div><div class="legs"><div class="leg"><span class="leg-tag out">가는 편</span><span class="leg-air">Jin Air</span><span class="leg-route"><b>09:30</b> PUS <span class="arw">→</span> <b>12:00</b> NRT</span><span class="leg-dur">2시간 30분</span></div><div class="leg"><span class="leg-tag ret">오는 편</span><span class="leg-air">Korean Air</span><span class="leg-route"><b>12:45</b> NRT <span class="arw">→</span> <b>15:05</b> PUS</span><span class="leg-dur">2시간 20분</span></div></div><div class="fcard-foot"><div class="fprice"><b>1인 675,858원</b><span>성인 4명 총 2,703,432원</span></div><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDItMDIoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDItMDUoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></div></div><div class="fcard "><div class="fcard-head"><span class="fdate">2027-02-04 ~ 2027-02-07</span><span class="same">–</span></div><div class="legs"><div class="leg"><span class="leg-tag out">가는 편</span><span class="leg-air">-</span><span class="leg-route"><b>오전 9:25</b> PUS <span class="arw">→</span> <b>오전 11:35</b> NRT</span></div><div class="leg"><span class="leg-tag ret">오는 편</span><span class="leg-air">-</span><span class="leg-route">NRT → PUS</span></div></div><div class="fcard-foot"><div class="fprice"><b>1인 682,800원</b><span>성인 4명 총 2,731,200원</span></div><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDItMDQoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDItMDcoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></div></div><div class="fcard "><div class="fcard-head"><span class="fdate">2027-02-10 ~ 2027-02-13</span><span class="same">–</span></div><div class="legs"><div class="leg"><span class="leg-tag out">가는 편</span><span class="leg-air">-</span><span class="leg-route"><b>오후 4:20</b> PUS <span class="arw">→</span> <b>오후 6:30</b> NRT</span></div><div class="leg"><span class="leg-tag ret">오는 편</span><span class="leg-air">-</span><span class="leg-route">NRT → PUS</span></div></div><div class="fcard-foot"><div class="fprice"><b>1인 682,900원</b><span>성인 4명 총 2,731,600원</span></div><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDItMTAoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDItMTMoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></div></div><div class="fcard "><div class="fcard-head"><span class="fdate">2027-02-09 ~ 2027-02-12</span><span class="up">▲ 566,344</span></div><div class="legs"><div class="leg"><span class="leg-tag out">가는 편</span><span class="leg-air">Korean Air</span><span class="leg-route"><b>16:20</b> PUS <span class="arw">→</span> <b>18:30</b> NRT</span><span class="leg-dur">2시간 10분</span></div><div class="leg"><span class="leg-tag ret">오는 편</span><span class="leg-air">Korean Air</span><span class="leg-route"><b>12:45</b> NRT <span class="arw">→</span> <b>15:05</b> PUS</span><span class="leg-dur">2시간 20분</span></div></div><div class="fcard-foot"><div class="fprice"><b>1인 739,386원</b><span>성인 4명 총 2,957,544원</span></div><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDItMDkoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDItMTIoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></div></div><div class="fcard "><div class="fcard-head"><span class="fdate">2027-02-05 ~ 2027-02-08</span><span class="same">–</span></div><div class="legs"><div class="leg"><span class="leg-tag out">가는 편</span><span class="leg-air">-</span><span class="leg-route"><b>오전 9:30</b> PUS <span class="arw">→</span> <b>오후 12:00</b> NRT</span></div><div class="leg"><span class="leg-tag ret">오는 편</span><span class="leg-air">-</span><span class="leg-route">NRT → PUS</span></div></div><div class="fcard-foot"><div class="fprice"><b>1인 783,200원</b><span>성인 4명 총 3,132,800원</span></div><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDItMDUoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDItMDgoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></div></div><div class="fcard "><div class="fcard-head"><span class="fdate">2027-02-08 ~ 2027-02-11</span><span class="up">▲ 611,672</span></div><div class="legs"><div class="leg"><span class="leg-tag out">가는 편</span><span class="leg-air">Korean Air</span><span class="leg-route"><b>16:20</b> PUS <span class="arw">→</span> <b>18:30</b> NRT</span><span class="leg-dur">2시간 10분</span></div><div class="leg"><span class="leg-tag ret">오는 편</span><span class="leg-air">Korean Air</span><span class="leg-route"><b>12:45</b> NRT <span class="arw">→</span> <b>15:05</b> PUS</span><span class="leg-dur">2시간 20분</span></div></div><div class="fcard-foot"><div class="fprice"><b>1인 805,718원</b><span>성인 4명 총 3,222,872원</span></div><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDItMDgoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDItMTEoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></div></div><div class="fcard "><div class="fcard-head"><span class="fdate">2027-02-17 ~ 2027-02-20</span><span class="up">▲ 836,399</span></div><div class="legs"><div class="leg"><span class="leg-tag out">가는 편</span><span class="leg-air">Jin Air</span><span class="leg-route"><b>09:30</b> PUS <span class="arw">→</span> <b>12:00</b> NRT</span><span class="leg-dur">2시간 30분</span></div><div class="leg"><span class="leg-tag ret">오는 편</span><span class="leg-air">Jin Air</span><span class="leg-route"><b>11:45</b> NRT <span class="arw">→</span> <b>14:05</b> PUS</span><span class="leg-dur">2시간 20분</span></div></div><div class="fcard-foot"><div class="fprice"><b>1인 846,900원</b><span>성인 4명 총 3,387,599원</span></div><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDItMTcoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDItMjAoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></div></div><div class="fcard "><div class="fcard-head"><span class="fdate">2027-02-06 ~ 2027-02-09</span><span class="up">▲ 733,999</span></div><div class="legs"><div class="leg"><span class="leg-tag out">가는 편</span><span class="leg-air">Korean Air</span><span class="leg-route"><b>16:20</b> PUS <span class="arw">→</span> <b>18:30</b> NRT</span><span class="leg-dur">2시간 10분</span></div><div class="leg"><span class="leg-tag ret">오는 편</span><span class="leg-air">Jin Air</span><span class="leg-route"><b>11:45</b> NRT <span class="arw">→</span> <b>14:05</b> PUS</span><span class="leg-dur">2시간 20분</span></div></div><div class="fcard-foot"><div class="fprice"><b>1인 966,700원</b><span>성인 4명 총 3,866,799원</span></div><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDItMDYoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDItMDkoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></div></div><div class="fcard "><div class="fcard-head"><span class="fdate">2027-02-07 ~ 2027-02-10</span><span class="up">▲ 815,199</span></div><div class="legs"><div class="leg"><span class="leg-tag out">가는 편</span><span class="leg-air">Korean Air</span><span class="leg-route"><b>09:25</b> PUS <span class="arw">→</span> <b>11:35</b> NRT</span><span class="leg-dur">2시간 10분</span></div><div class="leg"><span class="leg-tag ret">오는 편</span><span class="leg-air">Jin Air</span><span class="leg-route"><b>11:45</b> NRT <span class="arw">→</span> <b>14:05</b> PUS</span><span class="leg-dur">2시간 20분</span></div></div><div class="fcard-foot"><div class="fprice"><b>1인 966,700원</b><span>성인 4명 총 3,866,799원</span></div><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDItMDcoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDItMTAoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></div></div></div></div>
 </div>
 <footer>구글 항공권 기반 · 하루 3회 자동 갱신</footer>
 <script>
