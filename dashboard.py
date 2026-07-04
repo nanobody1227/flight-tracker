@@ -15,10 +15,40 @@ import csv
 import html
 import datetime as dt
 from collections import defaultdict
+from urllib.parse import quote
+
+from fast_flights import TFSData, FlightData, Passengers
 
 import config
 
 KST = dt.timezone(dt.timedelta(hours=9))
+
+
+def flight_link(origin, departure_date, return_date):
+    """
+    출발지·출국일·귀국일로 '구글 항공권 예약 페이지' 주소를 만든다.
+    (거기서 실제 항공사/여행사로 이어서 예약할 수 있습니다.)
+    """
+    max_stops = 0 if config.NON_STOP else None
+    try:
+        tfs = TFSData.from_interface(
+            flight_data=[
+                FlightData(date=departure_date, from_airport=origin,
+                           to_airport=config.DESTINATION, max_stops=max_stops),
+                FlightData(date=return_date, from_airport=config.DESTINATION,
+                           to_airport=origin, max_stops=max_stops),
+            ],
+            trip="round-trip",
+            passengers=Passengers(adults=config.ADULTS),
+            seat=config.SEAT,
+            max_stops=max_stops,
+        )
+        b64 = tfs.as_b64().decode("utf-8")
+        return (f"https://www.google.com/travel/flights"
+                f"?tfs={quote(b64)}&curr={config.CURRENCY}&hl=ko")
+    except Exception:
+        # 링크 생성이 실패해도 프로그램 전체는 계속 돌아가도록 일반 검색 주소로 대체
+        return "https://www.google.com/travel/flights"
 
 
 def read_rows():
@@ -111,6 +141,7 @@ def render_tab(record, ranking, label):
         return f'<p class="empty">아직 {html.escape(label)} 검색 결과가 없습니다.</p>'
 
     # 역대 최저가 강조 카드
+    record_link = flight_link(record['출발지'], record['출국일'], record['귀국일'])
     record_html = f"""
     <div class="record-card">
       <div class="record-title">역대 최저가 ({html.escape(label)})</div>
@@ -121,12 +152,14 @@ def render_tab(record, ranking, label):
         · {html.escape(record['항공사'])}<br>
         출국 {html.escape(record['출국일'])} / 귀국 {html.escape(record['귀국일'])}
       </div>
+      <a class="book-btn" href="{html.escape(record_link)}" target="_blank" rel="noopener">✈️ 예약하러 가기 (구글 항공권)</a>
     </div>
     """
 
     # 순위표 (각 줄 = 날짜 조합 하나)
     rows_html = ""
     for i, r in enumerate(ranking, start=1):
+        link = flight_link(r['origin'], r['departure'], r['return'])
         rows_html += f"""
         <tr>
           <td class="rank">{i}</td>
@@ -134,6 +167,7 @@ def render_tab(record, ranking, label):
           <td>{html.escape(r['origin'])}<br><span class="air">{html.escape(r['airline'])}</span></td>
           <td class="price">{r['total']:,}원<br><span class="pp">1인 {r['per_person']:,}</span></td>
           <td class="trend">{trend_badge(r['trend'], r['diff'])}</td>
+          <td><a class="book-link" href="{html.escape(link)}" target="_blank" rel="noopener">예약</a></td>
         </tr>
         """
 
@@ -142,7 +176,7 @@ def render_tab(record, ranking, label):
       <thead>
         <tr>
           <th>#</th><th>출국일 / 귀국일</th><th>출발/항공사</th>
-          <th>가격</th><th>추이</th>
+          <th>가격</th><th>추이</th><th>예약</th>
         </tr>
       </thead>
       <tbody>{rows_html}</tbody>
@@ -214,6 +248,16 @@ def build_dashboard():
   .record-price {{ font-size: 38px; font-weight: 800; color: #dc2626; margin: 6px 0; }}
   .record-sub {{ font-size: 13px; color: #475569; }}
   .record-meta {{ font-size: 13px; color: #334155; margin-top: 10px; line-height: 1.6; }}
+  .book-btn {{
+    display: inline-block; margin-top: 14px; padding: 12px 20px;
+    background: #16a34a; color: #fff; text-decoration: none;
+    border-radius: 10px; font-weight: 700; font-size: 15px;
+  }}
+  .book-link {{
+    display: inline-block; padding: 6px 12px; background: #16a34a;
+    color: #fff; text-decoration: none; border-radius: 8px;
+    font-weight: 700; font-size: 12px;
+  }}
   table {{
     width: 100%; border-collapse: collapse; background: #fff;
     border-radius: 12px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,.05);
@@ -240,7 +284,7 @@ def build_dashboard():
   <div class="tabs">{tab_buttons}</div>
   {''.join(tab_contents)}
 </div>
-<footer>Amadeus API 기반 · 하루 3회 자동 갱신</footer>
+<footer>구글 항공권 기반 · 하루 3회 자동 갱신</footer>
 <script>
   function showTab(n) {{
     var contents = document.getElementsByClassName('tab-content');

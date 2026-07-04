@@ -32,7 +32,7 @@ import re  # 가격 문자열("₩2171200")에서 숫자만 뽑을 때 사용
 from fast_flights import get_flights_from_filter, TFSData, FlightData, Passengers
 
 import config
-from dashboard import build_dashboard  # 대시보드 생성 함수
+from dashboard import build_dashboard, flight_link  # 대시보드 생성 + 예약 링크 함수
 
 
 # ────────────────────────────────────────────────────────────────
@@ -261,6 +261,7 @@ def send_email(subject, html_body):
 
 def format_flight_html(r):
     """항공편 한 건을 메일용 HTML 조각으로 만든다."""
+    link = flight_link(r["origin"], r["departure_date"], r["return_date"])
     return (
         f"<ul>"
         f"<li>일정: <b>{r['stay_label']}</b></li>"
@@ -270,6 +271,10 @@ def format_flight_html(r):
         f"<li>총 가격(성인 {config.ADULTS}명): <b>{r['total_price']:,}원</b></li>"
         f"<li>1인당 가격: <b>{r['per_person']:,}원</b></li>"
         f"</ul>"
+        f'<p><a href="{link}" '
+        f'style="display:inline-block;padding:10px 18px;background:#16a34a;'
+        f'color:#fff;text-decoration:none;border-radius:8px;font-weight:700;">'
+        f'✈️ 이 항공편 예약하러 가기 (구글 항공권)</a></p>'
     )
 
 
