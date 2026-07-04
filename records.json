@@ -1,0 +1,20 @@
+{
+  "2박3일": {
+    "total_price": 2112800,
+    "per_person": 528200,
+    "airline": "Jin Air",
+    "origin": "PUS",
+    "departure_date": "2027-01-26",
+    "return_date": "2027-01-28",
+    "search_time": "2026-07-04 14:44:21"
+  },
+  "3박4일": {
+    "total_price": 2171200,
+    "per_person": 542800,
+    "airline": "Korean Air",
+    "origin": "PUS",
+    "departure_date": "2027-01-27",
+    "return_date": "2027-01-30",
+    "search_time": "2026-07-04 14:44:21"
+  }
+}
