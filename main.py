@@ -63,6 +63,21 @@ def parse_price(price_text):
     return int(digits) if digits else None
 
 
+def clean_time(text):
+    """'9:30 AM on Tue, Jan 26' → '오전 9:30' 처럼 시각만 깔끔히 뽑는다."""
+    t = (text or "").split(" on ")[0].strip()  # 날짜 부분 떼어내고 시각만
+    if t.endswith("AM"):
+        return "오전 " + t[:-2].strip()
+    if t.endswith("PM"):
+        return "오후 " + t[:-2].strip()
+    return t
+
+
+def kor_duration(text):
+    """'2 hr 30 min' → '2시간 30분' 으로 바꾼다."""
+    return (text or "").replace(" hr", "시간").replace(" min", "분").strip()
+
+
 def search_one(origin, departure_date, return_date):
     """
     한 개의 (출발지, 출국일, 귀국일) 조합에 대해
@@ -97,22 +112,24 @@ def search_one(origin, departure_date, return_date):
         return None
 
     # 후보들 중 직항이면서 가격이 있는 것만 모아 최저가 찾기
-    best = None  # (가격, 항공사) 형태
+    best_price = None
+    best_flight = None  # 가장 싼 항공편 객체 그대로 보관 (시간 정보 때문에)
     for f in result.flights:
         if config.NON_STOP and f.stops != 0:  # 혹시 섞여 나온 경유편 제외
             continue
         price = parse_price(f.price)
         if price is None:
             continue
-        if best is None or price < best[0]:
-            best = (price, f.name)
+        if best_price is None or price < best_price:
+            best_price = price
+            best_flight = f
 
-    if best is None:
+    if best_flight is None:
         return None
 
-    total_price = best[0]                             # 성인 전체 총액(KRW)
+    total_price = best_price                           # 성인 전체 총액(KRW)
     per_person = round(total_price / config.ADULTS)    # 1인당 가격
-    airline = best[1] or "?"
+    airline = best_flight.name or "?"
 
     return {
         "origin": origin,
@@ -121,6 +138,10 @@ def search_one(origin, departure_date, return_date):
         "airline": airline,
         "total_price": total_price,
         "per_person": per_person,
+        # 가는 편(출발지→도쿄) 시각·소요시간 (왕복 검색은 가는 편만 제공됨)
+        "dep_time": clean_time(best_flight.departure),
+        "arr_time": clean_time(best_flight.arrival),
+        "duration": kor_duration(best_flight.duration),
     }
 
 
@@ -188,23 +209,40 @@ def run_search():
 # ================================================================
 CSV_HEADER = [
     "검색시각", "일정타입", "출발지", "출국일", "귀국일",
-    "항공사", "총가격KRW", "1인가격KRW",
+    "항공사", "가는편출발", "가는편도착", "소요시간",
+    "총가격KRW", "1인가격KRW",
 ]
 
 
 def append_to_csv(results):
-    """검색 결과를 price_history.csv 맨 아래에 계속 이어붙인다."""
-    file_exists = os.path.exists(config.CSV_FILE)
-    with open(config.CSV_FILE, "a", newline="", encoding="utf-8-sig") as f:
-        writer = csv.writer(f)
-        if not file_exists:
-            writer.writerow(CSV_HEADER)  # 파일이 처음이면 제목줄부터
+    """
+    검색 결과를 price_history.csv 에 이어 붙인다.
+    (예전 파일에는 시간 칸이 없으므로, 읽어서 새 제목줄로 통째로 다시 쓴다.
+     이렇게 하면 옛 기록도 그대로 보존되고 칸이 어긋나지 않는다.)
+    """
+    # 1) 기존 기록 읽어두기 (있으면)
+    old_rows = []
+    if os.path.exists(config.CSV_FILE):
+        with open(config.CSV_FILE, "r", encoding="utf-8-sig", newline="") as f:
+            old_rows = list(csv.DictReader(f))
+
+    # 2) 새 제목줄로 전체 다시 쓰기 (옛 기록 → 없는 칸은 빈칸으로)
+    with open(config.CSV_FILE, "w", newline="", encoding="utf-8-sig") as f:
+        writer = csv.DictWriter(f, fieldnames=CSV_HEADER,
+                                extrasaction="ignore", restval="")
+        writer.writeheader()
+        for row in old_rows:
+            writer.writerow(row)
         for r in results:
-            writer.writerow([
-                r["search_time"], r["stay_label"], r["origin"],
-                r["departure_date"], r["return_date"], r["airline"],
-                r["total_price"], r["per_person"],
-            ])
+            writer.writerow({
+                "검색시각": r["search_time"], "일정타입": r["stay_label"],
+                "출발지": r["origin"], "출국일": r["departure_date"],
+                "귀국일": r["return_date"], "항공사": r["airline"],
+                "가는편출발": r.get("dep_time", ""),
+                "가는편도착": r.get("arr_time", ""),
+                "소요시간": r.get("duration", ""),
+                "총가격KRW": r["total_price"], "1인가격KRW": r["per_person"],
+            })
 
 
 # ================================================================
@@ -262,14 +300,23 @@ def send_email(subject, html_body):
 def format_flight_html(r):
     """항공편 한 건을 메일용 HTML 조각으로 만든다."""
     link = flight_link(r["origin"], r["departure_date"], r["return_date"])
+    # 가는 편 시각 줄 (정보가 있을 때만)
+    dep_t = r.get("dep_time", "")
+    arr_t = r.get("arr_time", "")
+    dur = r.get("duration", "")
+    time_line = ""
+    if dep_t or arr_t:
+        dur_txt = f" (소요 {dur})" if dur else ""
+        time_line = (f"<li>가는 편 시각: {dep_t} → {arr_t}{dur_txt}</li>")
     return (
         f"<ul>"
         f"<li>일정: <b>{r['stay_label']}</b></li>"
         f"<li>출발지 → 도착지: {r['origin']} → {config.DESTINATION}</li>"
         f"<li>출국일: {r['departure_date']} / 귀국일: {r['return_date']}</li>"
+        f"{time_line}"
         f"<li>항공사: {r['airline']}</li>"
-        f"<li>총 가격(성인 {config.ADULTS}명): <b>{r['total_price']:,}원</b></li>"
-        f"<li>1인당 가격: <b>{r['per_person']:,}원</b></li>"
+        f"<li>1인당 가격: <b style='font-size:18px;color:#dc2626;'>{r['per_person']:,}원</b></li>"
+        f"<li>총 가격(성인 {config.ADULTS}명): {r['total_price']:,}원</li>"
         f"</ul>"
         f'<p><a href="{link}" '
         f'style="display:inline-block;padding:10px 18px;background:#16a34a;'

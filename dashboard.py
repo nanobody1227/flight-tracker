@@ -65,6 +65,10 @@ def read_rows():
                 row["1인가격KRW"] = int(row["1인가격KRW"])
             except (ValueError, KeyError):
                 continue
+            # 시간 칸은 옛 기록엔 없을 수 있으니 없으면 빈칸으로
+            row["가는편출발"] = row.get("가는편출발") or ""
+            row["가는편도착"] = row.get("가는편도착") or ""
+            row["소요시간"] = row.get("소요시간") or ""
             rows.append(row)
         return rows
 
@@ -115,6 +119,9 @@ def build_tab_data(rows, label):
             "airline": latest["항공사"],
             "total": latest["총가격KRW"],
             "per_person": latest["1인가격KRW"],
+            "dep_time": latest.get("가는편출발", ""),
+            "arr_time": latest.get("가는편도착", ""),
+            "duration": latest.get("소요시간", ""),
             "trend": trend,
             "diff": diff,
         })
@@ -140,17 +147,23 @@ def render_tab(record, ranking, label):
     if record is None:
         return f'<p class="empty">아직 {html.escape(label)} 검색 결과가 없습니다.</p>'
 
-    # 역대 최저가 강조 카드
+    # 역대 최저가 강조 카드 (1인당 가격을 크게)
     record_link = flight_link(record['출발지'], record['출국일'], record['귀국일'])
+    # 가는 편 시각 줄 (정보가 있을 때만 표시)
+    r_dep, r_arr, r_dur = record.get("가는편출발", ""), record.get("가는편도착", ""), record.get("소요시간", "")
+    record_time = ""
+    if r_dep or r_arr:
+        dur_txt = f" · {html.escape(r_dur)}" if r_dur else ""
+        record_time = (f"<br>가는 편 {html.escape(r_dep)} → {html.escape(r_arr)}{dur_txt}")
     record_html = f"""
     <div class="record-card">
-      <div class="record-title">역대 최저가 ({html.escape(label)})</div>
-      <div class="record-price">{record['총가격KRW']:,}원</div>
-      <div class="record-sub">1인당 {record['1인가격KRW']:,}원 · 성인 {config.ADULTS}명 총액</div>
+      <div class="record-title">역대 최저가 ({html.escape(label)}) · 1인당</div>
+      <div class="record-price">{record['1인가격KRW']:,}원</div>
+      <div class="record-sub">성인 {config.ADULTS}명 총액 {record['총가격KRW']:,}원</div>
       <div class="record-meta">
         {html.escape(record['출발지'])} → {html.escape(config.DESTINATION)}
         · {html.escape(record['항공사'])}<br>
-        출국 {html.escape(record['출국일'])} / 귀국 {html.escape(record['귀국일'])}
+        출국 {html.escape(record['출국일'])} / 귀국 {html.escape(record['귀국일'])}{record_time}
       </div>
       <a class="book-btn" href="{html.escape(record_link)}" target="_blank" rel="noopener">✈️ 예약하러 가기 (구글 항공권)</a>
     </div>
@@ -160,12 +173,16 @@ def render_tab(record, ranking, label):
     rows_html = ""
     for i, r in enumerate(ranking, start=1):
         link = flight_link(r['origin'], r['departure'], r['return'])
+        # 가는 편 시각 (있을 때만)
+        tm = ""
+        if r.get("dep_time") or r.get("arr_time"):
+            tm = f'<br><span class="tm">가는 편 {html.escape(r.get("dep_time",""))} → {html.escape(r.get("arr_time",""))}</span>'
         rows_html += f"""
         <tr>
           <td class="rank">{i}</td>
           <td>{html.escape(r['departure'])}<br><span class="ret">↩ {html.escape(r['return'])}</span></td>
-          <td>{html.escape(r['origin'])}<br><span class="air">{html.escape(r['airline'])}</span></td>
-          <td class="price">{r['total']:,}원<br><span class="pp">1인 {r['per_person']:,}</span></td>
+          <td>{html.escape(r['origin'])}<br><span class="air">{html.escape(r['airline'])}</span>{tm}</td>
+          <td class="price">1인 {r['per_person']:,}원<br><span class="pp">총 {r['total']:,}</span></td>
           <td class="trend">{trend_badge(r['trend'], r['diff'])}</td>
           <td><a class="book-link" href="{html.escape(link)}" target="_blank" rel="noopener">예약</a></td>
         </tr>
@@ -267,6 +284,7 @@ def build_dashboard():
   td.rank {{ font-weight: 800; color: #2563eb; }}
   td.price {{ font-weight: 700; }}
   .ret, .air, .pp {{ font-size: 11px; color: #94a3b8; }}
+  .tm {{ font-size: 11px; color: #2563eb; }}
   .down {{ color: #16a34a; font-weight: 700; }}
   .up {{ color: #dc2626; font-weight: 700; }}
   .new {{ color: #2563eb; font-weight: 700; font-size: 11px; }}
