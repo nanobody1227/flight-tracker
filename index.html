@@ -35,6 +35,16 @@
   .record-price { font-size: 38px; font-weight: 800; color: #dc2626; margin: 6px 0; }
   .record-sub { font-size: 13px; color: #475569; }
   .record-meta { font-size: 13px; color: #334155; margin-top: 10px; line-height: 1.6; }
+  .book-btn {
+    display: inline-block; margin-top: 14px; padding: 12px 20px;
+    background: #16a34a; color: #fff; text-decoration: none;
+    border-radius: 10px; font-weight: 700; font-size: 15px;
+  }
+  .book-link {
+    display: inline-block; padding: 6px 12px; background: #16a34a;
+    color: #fff; text-decoration: none; border-radius: 8px;
+    font-weight: 700; font-size: 12px;
+  }
   table {
     width: 100%; border-collapse: collapse; background: #fff;
     border-radius: 12px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,.05);
@@ -55,7 +65,7 @@
 <body>
 <header>
   <h1>✈️ PUS ↔ NRT 왕복 직항 최저가</h1>
-  <p>성인 4명 · 이코노미 · 마지막 업데이트 2026-07-04 14:45:07 (KST)</p>
+  <p>성인 4명 · 이코노미 · 마지막 업데이트 2026-07-04 14:59:58 (KST)</p>
 </header>
 <div class="wrap">
   <div class="tabs"><button class="tab-btn active" onclick="showTab(0)" id="btn0">2박3일</button><button class="tab-btn " onclick="showTab(1)" id="btn1">3박4일</button></div>
@@ -69,13 +79,14 @@
         · Jin Air<br>
         출국 2027-01-26 / 귀국 2027-01-28
       </div>
+      <a class="book-btn" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDEtMjYoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDEtMjgoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">✈️ 예약하러 가기 (구글 항공권)</a>
     </div>
     
     <table>
       <thead>
         <tr>
           <th>#</th><th>출국일 / 귀국일</th><th>출발/항공사</th>
-          <th>가격</th><th>추이</th>
+          <th>가격</th><th>추이</th><th>예약</th>
         </tr>
       </thead>
       <tbody>
@@ -84,7 +95,8 @@
           <td>2027-01-26<br><span class="ret">↩ 2027-01-28</span></td>
           <td>PUS<br><span class="air">Jin Air</span></td>
           <td class="price">2,112,800원<br><span class="pp">1인 528,200</span></td>
-          <td class="trend"><span class="new">NEW</span></td>
+          <td class="trend"><span class="same">–</span></td>
+          <td><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDEtMjYoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDEtMjgoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></td>
         </tr>
         
         <tr>
@@ -93,6 +105,7 @@
           <td>PUS<br><span class="air">Korean Air</span></td>
           <td class="price">2,171,200원<br><span class="pp">1인 542,800</span></td>
           <td class="trend"><span class="new">NEW</span></td>
+          <td><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDEtMzAoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDItMDEoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></td>
         </tr>
         
         <tr>
@@ -101,6 +114,7 @@
           <td>PUS<br><span class="air">Korean Air</span></td>
           <td class="price">2,171,200원<br><span class="pp">1인 542,800</span></td>
           <td class="trend"><span class="new">NEW</span></td>
+          <td><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDItMDMoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDItMDUoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></td>
         </tr>
         
         <tr>
@@ -108,119 +122,188 @@
           <td>2027-02-17<br><span class="ret">↩ 2027-02-19</span></td>
           <td>PUS<br><span class="air">Korean Air</span></td>
           <td class="price">2,171,200원<br><span class="pp">1인 542,800</span></td>
-          <td class="trend"><span class="new">NEW</span></td>
+          <td class="trend"><span class="same">–</span></td>
+          <td><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDItMTcoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDItMTkoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></td>
         </tr>
         
         <tr>
           <td class="rank">5</td>
-          <td>2027-01-25<br><span class="ret">↩ 2027-01-27</span></td>
-          <td>PUS<br><span class="air">Jin Air</span></td>
-          <td class="price">2,172,800원<br><span class="pp">1인 543,200</span></td>
+          <td>2027-01-27<br><span class="ret">↩ 2027-01-29</span></td>
+          <td>PUS<br><span class="air">Korean Air</span></td>
+          <td class="price">2,171,200원<br><span class="pp">1인 542,800</span></td>
           <td class="trend"><span class="new">NEW</span></td>
+          <td><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDEtMjcoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDEtMjkoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></td>
         </tr>
         
         <tr>
           <td class="rank">6</td>
-          <td>2027-02-02<br><span class="ret">↩ 2027-02-04</span></td>
-          <td>PUS<br><span class="air">Jin Air</span></td>
-          <td class="price">2,172,800원<br><span class="pp">1인 543,200</span></td>
+          <td>2027-02-16<br><span class="ret">↩ 2027-02-18</span></td>
+          <td>PUS<br><span class="air">Korean Air</span></td>
+          <td class="price">2,171,200원<br><span class="pp">1인 542,800</span></td>
           <td class="trend"><span class="new">NEW</span></td>
+          <td><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDItMTYoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDItMTgoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></td>
         </tr>
         
         <tr>
           <td class="rank">7</td>
-          <td>2027-01-31<br><span class="ret">↩ 2027-02-02</span></td>
-          <td>PUS<br><span class="air">Jin Air</span></td>
-          <td class="price">2,232,800원<br><span class="pp">1인 558,200</span></td>
+          <td>2027-02-20<br><span class="ret">↩ 2027-02-22</span></td>
+          <td>PUS<br><span class="air">Korean Air</span></td>
+          <td class="price">2,172,000원<br><span class="pp">1인 543,000</span></td>
           <td class="trend"><span class="new">NEW</span></td>
+          <td><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDItMjAoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDItMjIoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></td>
         </tr>
         
         <tr>
           <td class="rank">8</td>
-          <td>2027-02-01<br><span class="ret">↩ 2027-02-03</span></td>
+          <td>2027-01-25<br><span class="ret">↩ 2027-01-27</span></td>
           <td>PUS<br><span class="air">Jin Air</span></td>
-          <td class="price">2,232,800원<br><span class="pp">1인 558,200</span></td>
+          <td class="price">2,172,800원<br><span class="pp">1인 543,200</span></td>
           <td class="trend"><span class="new">NEW</span></td>
+          <td><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDEtMjUoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDEtMjcoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></td>
         </tr>
         
         <tr>
           <td class="rank">9</td>
-          <td>2027-01-29<br><span class="ret">↩ 2027-01-31</span></td>
+          <td>2027-02-02<br><span class="ret">↩ 2027-02-04</span></td>
           <td>PUS<br><span class="air">Jin Air</span></td>
-          <td class="price">2,272,800원<br><span class="pp">1인 568,200</span></td>
+          <td class="price">2,172,800원<br><span class="pp">1인 543,200</span></td>
           <td class="trend"><span class="new">NEW</span></td>
+          <td><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDItMDIoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDItMDQoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></td>
         </tr>
         
         <tr>
           <td class="rank">10</td>
-          <td>2027-02-10<br><span class="ret">↩ 2027-02-12</span></td>
-          <td>PUS<br><span class="air">Korean Air</span></td>
-          <td class="price">2,391,200원<br><span class="pp">1인 597,800</span></td>
+          <td>2027-02-21<br><span class="ret">↩ 2027-02-23</span></td>
+          <td>PUS<br><span class="air">Jin Air</span></td>
+          <td class="price">2,230,800원<br><span class="pp">1인 557,700</span></td>
           <td class="trend"><span class="new">NEW</span></td>
+          <td><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDItMjEoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDItMjMoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></td>
         </tr>
         
         <tr>
           <td class="rank">11</td>
-          <td>2027-02-15<br><span class="ret">↩ 2027-02-17</span></td>
-          <td>PUS<br><span class="air">Korean Air</span></td>
-          <td class="price">2,431,200원<br><span class="pp">1인 607,800</span></td>
+          <td>2027-01-31<br><span class="ret">↩ 2027-02-02</span></td>
+          <td>PUS<br><span class="air">Jin Air</span></td>
+          <td class="price">2,232,800원<br><span class="pp">1인 558,200</span></td>
           <td class="trend"><span class="new">NEW</span></td>
+          <td><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDEtMzEoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDItMDIoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></td>
         </tr>
         
         <tr>
           <td class="rank">12</td>
-          <td>2027-02-11<br><span class="ret">↩ 2027-02-13</span></td>
+          <td>2027-02-01<br><span class="ret">↩ 2027-02-03</span></td>
           <td>PUS<br><span class="air">Jin Air</span></td>
-          <td class="price">2,432,800원<br><span class="pp">1인 608,200</span></td>
+          <td class="price">2,232,800원<br><span class="pp">1인 558,200</span></td>
           <td class="trend"><span class="new">NEW</span></td>
+          <td><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDItMDEoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDItMDMoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></td>
         </tr>
         
         <tr>
           <td class="rank">13</td>
-          <td>2027-02-13<br><span class="ret">↩ 2027-02-15</span></td>
-          <td>PUS<br><span class="air">Korean Air</span></td>
-          <td class="price">2,511,200원<br><span class="pp">1인 627,800</span></td>
+          <td>2027-01-29<br><span class="ret">↩ 2027-01-31</span></td>
+          <td>PUS<br><span class="air">Jin Air</span></td>
+          <td class="price">2,272,800원<br><span class="pp">1인 568,200</span></td>
           <td class="trend"><span class="new">NEW</span></td>
+          <td><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDEtMjkoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDEtMzEoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></td>
         </tr>
         
         <tr>
           <td class="rank">14</td>
-          <td>2027-02-19<br><span class="ret">↩ 2027-02-21</span></td>
+          <td>2027-02-10<br><span class="ret">↩ 2027-02-12</span></td>
           <td>PUS<br><span class="air">Korean Air</span></td>
-          <td class="price">2,552,000원<br><span class="pp">1인 638,000</span></td>
+          <td class="price">2,391,200원<br><span class="pp">1인 597,800</span></td>
           <td class="trend"><span class="new">NEW</span></td>
+          <td><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDItMTAoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDItMTIoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></td>
         </tr>
         
         <tr>
           <td class="rank">15</td>
-          <td>2027-02-12<br><span class="ret">↩ 2027-02-14</span></td>
-          <td>PUS<br><span class="air">Jin Air</span></td>
-          <td class="price">2,552,800원<br><span class="pp">1인 638,200</span></td>
+          <td>2027-02-15<br><span class="ret">↩ 2027-02-17</span></td>
+          <td>PUS<br><span class="air">Korean Air</span></td>
+          <td class="price">2,431,200원<br><span class="pp">1인 607,800</span></td>
           <td class="trend"><span class="new">NEW</span></td>
+          <td><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDItMTUoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDItMTcoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></td>
         </tr>
         
         <tr>
           <td class="rank">16</td>
-          <td>2027-02-08<br><span class="ret">↩ 2027-02-10</span></td>
-          <td>PUS<br><span class="air">Korean Air</span></td>
-          <td class="price">2,671,200원<br><span class="pp">1인 667,800</span></td>
+          <td>2027-02-11<br><span class="ret">↩ 2027-02-13</span></td>
+          <td>PUS<br><span class="air">Jin Air</span></td>
+          <td class="price">2,432,800원<br><span class="pp">1인 608,200</span></td>
           <td class="trend"><span class="new">NEW</span></td>
+          <td><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDItMTEoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDItMTMoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></td>
         </tr>
         
         <tr>
           <td class="rank">17</td>
-          <td>2027-02-05<br><span class="ret">↩ 2027-02-07</span></td>
+          <td>2027-02-13<br><span class="ret">↩ 2027-02-15</span></td>
           <td>PUS<br><span class="air">Korean Air</span></td>
-          <td class="price">2,851,600원<br><span class="pp">1인 712,900</span></td>
-          <td class="trend"><span class="new">NEW</span></td>
+          <td class="price">2,511,200원<br><span class="pp">1인 627,800</span></td>
+          <td class="trend"><span class="same">–</span></td>
+          <td><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDItMTMoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDItMTUoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></td>
         </tr>
         
         <tr>
           <td class="rank">18</td>
+          <td>2027-02-18<br><span class="ret">↩ 2027-02-20</span></td>
+          <td>PUS<br><span class="air">Korean Air</span></td>
+          <td class="price">2,551,200원<br><span class="pp">1인 637,800</span></td>
+          <td class="trend"><span class="new">NEW</span></td>
+          <td><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDItMTgoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDItMjAoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></td>
+        </tr>
+        
+        <tr>
+          <td class="rank">19</td>
+          <td>2027-02-19<br><span class="ret">↩ 2027-02-21</span></td>
+          <td>PUS<br><span class="air">Korean Air</span></td>
+          <td class="price">2,552,000원<br><span class="pp">1인 638,000</span></td>
+          <td class="trend"><span class="same">–</span></td>
+          <td><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDItMTkoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDItMjEoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></td>
+        </tr>
+        
+        <tr>
+          <td class="rank">20</td>
+          <td>2027-02-12<br><span class="ret">↩ 2027-02-14</span></td>
+          <td>PUS<br><span class="air">Jin Air</span></td>
+          <td class="price">2,552,800원<br><span class="pp">1인 638,200</span></td>
+          <td class="trend"><span class="same">–</span></td>
+          <td><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDItMTIoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDItMTQoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></td>
+        </tr>
+        
+        <tr>
+          <td class="rank">21</td>
+          <td>2027-02-04<br><span class="ret">↩ 2027-02-06</span></td>
+          <td>PUS<br><span class="air">Korean Air</span></td>
+          <td class="price">2,571,200원<br><span class="pp">1인 642,800</span></td>
+          <td class="trend"><span class="new">NEW</span></td>
+          <td><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDItMDQoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDItMDYoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></td>
+        </tr>
+        
+        <tr>
+          <td class="rank">22</td>
+          <td>2027-02-08<br><span class="ret">↩ 2027-02-10</span></td>
+          <td>PUS<br><span class="air">Korean Air</span></td>
+          <td class="price">2,671,200원<br><span class="pp">1인 667,800</span></td>
+          <td class="trend"><span class="new">NEW</span></td>
+          <td><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDItMDgoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDItMTAoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></td>
+        </tr>
+        
+        <tr>
+          <td class="rank">23</td>
+          <td>2027-02-05<br><span class="ret">↩ 2027-02-07</span></td>
+          <td>PUS<br><span class="air">Korean Air</span></td>
+          <td class="price">2,851,600원<br><span class="pp">1인 712,900</span></td>
+          <td class="trend"><span class="same">–</span></td>
+          <td><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDItMDUoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDItMDcoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></td>
+        </tr>
+        
+        <tr>
+          <td class="rank">24</td>
           <td>2027-02-07<br><span class="ret">↩ 2027-02-09</span></td>
           <td>PUS<br><span class="air">Jin Air</span></td>
           <td class="price">3,132,800원<br><span class="pp">1인 783,200</span></td>
           <td class="trend"><span class="new">NEW</span></td>
+          <td><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDItMDcoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDItMDkoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></td>
         </tr>
         </tbody>
     </table>
@@ -234,13 +317,14 @@
         · Korean Air<br>
         출국 2027-01-27 / 귀국 2027-01-30
       </div>
+      <a class="book-btn" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDEtMjcoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDEtMzAoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">✈️ 예약하러 가기 (구글 항공권)</a>
     </div>
     
     <table>
       <thead>
         <tr>
           <th>#</th><th>출국일 / 귀국일</th><th>출발/항공사</th>
-          <th>가격</th><th>추이</th>
+          <th>가격</th><th>추이</th><th>예약</th>
         </tr>
       </thead>
       <tbody>
@@ -249,7 +333,8 @@
           <td>2027-01-27<br><span class="ret">↩ 2027-01-30</span></td>
           <td>PUS<br><span class="air">Korean Air</span></td>
           <td class="price">2,171,200원<br><span class="pp">1인 542,800</span></td>
-          <td class="trend"><span class="new">NEW</span></td>
+          <td class="trend"><span class="same">–</span></td>
+          <td><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDEtMjcoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDEtMzAoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></td>
         </tr>
         
         <tr>
@@ -258,6 +343,7 @@
           <td>PUS<br><span class="air">Korean Air</span></td>
           <td class="price">2,171,200원<br><span class="pp">1인 542,800</span></td>
           <td class="trend"><span class="new">NEW</span></td>
+          <td><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDEtMzAoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDItMDIoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></td>
         </tr>
         
         <tr>
@@ -266,108 +352,184 @@
           <td>PUS<br><span class="air">Korean Air</span></td>
           <td class="price">2,171,200원<br><span class="pp">1인 542,800</span></td>
           <td class="trend"><span class="new">NEW</span></td>
+          <td><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDItMTYoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDItMTkoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></td>
         </tr>
         
         <tr>
           <td class="rank">4</td>
-          <td>2027-02-20<br><span class="ret">↩ 2027-02-23</span></td>
+          <td>2027-01-29<br><span class="ret">↩ 2027-02-01</span></td>
           <td>PUS<br><span class="air">Korean Air</span></td>
-          <td class="price">2,172,000원<br><span class="pp">1인 543,000</span></td>
+          <td class="price">2,171,200원<br><span class="pp">1인 542,800</span></td>
           <td class="trend"><span class="new">NEW</span></td>
+          <td><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDEtMjkoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDItMDEoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></td>
         </tr>
         
         <tr>
           <td class="rank">5</td>
-          <td>2027-01-28<br><span class="ret">↩ 2027-01-31</span></td>
-          <td>PUS<br><span class="air">Jin Air</span></td>
-          <td class="price">2,212,800원<br><span class="pp">1인 553,200</span></td>
+          <td>2027-02-03<br><span class="ret">↩ 2027-02-06</span></td>
+          <td>PUS<br><span class="air">Korean Air</span></td>
+          <td class="price">2,171,200원<br><span class="pp">1인 542,800</span></td>
           <td class="trend"><span class="new">NEW</span></td>
+          <td><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDItMDMoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDItMDYoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></td>
         </tr>
         
         <tr>
           <td class="rank">6</td>
-          <td>2027-02-02<br><span class="ret">↩ 2027-02-05</span></td>
+          <td>2027-02-12<br><span class="ret">↩ 2027-02-15</span></td>
           <td>PUS<br><span class="air">Korean Air</span></td>
-          <td class="price">2,311,200원<br><span class="pp">1인 577,800</span></td>
+          <td class="price">2,171,200원<br><span class="pp">1인 542,800</span></td>
           <td class="trend"><span class="new">NEW</span></td>
+          <td><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDItMTIoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDItMTUoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></td>
         </tr>
         
         <tr>
           <td class="rank">7</td>
-          <td>2027-02-09<br><span class="ret">↩ 2027-02-12</span></td>
+          <td>2027-02-20<br><span class="ret">↩ 2027-02-23</span></td>
           <td>PUS<br><span class="air">Korean Air</span></td>
-          <td class="price">2,391,200원<br><span class="pp">1인 597,800</span></td>
+          <td class="price">2,172,000원<br><span class="pp">1인 543,000</span></td>
           <td class="trend"><span class="new">NEW</span></td>
+          <td><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDItMjAoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDItMjMoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></td>
         </tr>
         
         <tr>
           <td class="rank">8</td>
-          <td>2027-02-13<br><span class="ret">↩ 2027-02-16</span></td>
+          <td>2027-02-19<br><span class="ret">↩ 2027-02-22</span></td>
           <td>PUS<br><span class="air">Korean Air</span></td>
-          <td class="price">2,511,200원<br><span class="pp">1인 627,800</span></td>
+          <td class="price">2,172,000원<br><span class="pp">1인 543,000</span></td>
           <td class="trend"><span class="new">NEW</span></td>
+          <td><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDItMTkoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDItMjIoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></td>
         </tr>
         
         <tr>
           <td class="rank">9</td>
-          <td>2027-02-14<br><span class="ret">↩ 2027-02-17</span></td>
-          <td>PUS<br><span class="air">Korean Air</span></td>
-          <td class="price">2,511,200원<br><span class="pp">1인 627,800</span></td>
+          <td>2027-01-28<br><span class="ret">↩ 2027-01-31</span></td>
+          <td>PUS<br><span class="air">Jin Air</span></td>
+          <td class="price">2,212,800원<br><span class="pp">1인 553,200</span></td>
           <td class="trend"><span class="new">NEW</span></td>
+          <td><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDEtMjgoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDEtMzEoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></td>
         </tr>
         
         <tr>
           <td class="rank">10</td>
-          <td>2027-02-17<br><span class="ret">↩ 2027-02-20</span></td>
-          <td>PUS<br><span class="air">Korean Air</span></td>
-          <td class="price">2,551,200원<br><span class="pp">1인 637,800</span></td>
+          <td>2027-02-01<br><span class="ret">↩ 2027-02-04</span></td>
+          <td>PUS<br><span class="air">Jin Air</span></td>
+          <td class="price">2,232,800원<br><span class="pp">1인 558,200</span></td>
           <td class="trend"><span class="new">NEW</span></td>
+          <td><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDItMDEoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDItMDQoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></td>
         </tr>
         
         <tr>
           <td class="rank">11</td>
-          <td>2027-02-11<br><span class="ret">↩ 2027-02-14</span></td>
-          <td>PUS<br><span class="air">Jin Air</span></td>
-          <td class="price">2,552,800원<br><span class="pp">1인 638,200</span></td>
-          <td class="trend"><span class="new">NEW</span></td>
+          <td>2027-02-02<br><span class="ret">↩ 2027-02-05</span></td>
+          <td>PUS<br><span class="air">Korean Air</span></td>
+          <td class="price">2,311,200원<br><span class="pp">1인 577,800</span></td>
+          <td class="trend"><span class="same">–</span></td>
+          <td><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDItMDIoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDItMDUoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></td>
         </tr>
         
         <tr>
           <td class="rank">12</td>
-          <td>2027-02-08<br><span class="ret">↩ 2027-02-11</span></td>
+          <td>2027-02-09<br><span class="ret">↩ 2027-02-12</span></td>
           <td>PUS<br><span class="air">Korean Air</span></td>
-          <td class="price">2,611,200원<br><span class="pp">1인 652,800</span></td>
-          <td class="trend"><span class="new">NEW</span></td>
+          <td class="price">2,391,200원<br><span class="pp">1인 597,800</span></td>
+          <td class="trend"><span class="same">–</span></td>
+          <td><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDItMDkoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDItMTIoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></td>
         </tr>
         
         <tr>
           <td class="rank">13</td>
-          <td>2027-02-04<br><span class="ret">↩ 2027-02-07</span></td>
+          <td>2027-02-13<br><span class="ret">↩ 2027-02-16</span></td>
           <td>PUS<br><span class="air">Korean Air</span></td>
-          <td class="price">2,731,200원<br><span class="pp">1인 682,800</span></td>
-          <td class="trend"><span class="new">NEW</span></td>
+          <td class="price">2,511,200원<br><span class="pp">1인 627,800</span></td>
+          <td class="trend"><span class="same">–</span></td>
+          <td><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDItMTMoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDItMTYoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></td>
         </tr>
         
         <tr>
           <td class="rank">14</td>
-          <td>2027-02-10<br><span class="ret">↩ 2027-02-13</span></td>
+          <td>2027-02-14<br><span class="ret">↩ 2027-02-17</span></td>
           <td>PUS<br><span class="air">Korean Air</span></td>
-          <td class="price">2,731,600원<br><span class="pp">1인 682,900</span></td>
-          <td class="trend"><span class="new">NEW</span></td>
+          <td class="price">2,511,200원<br><span class="pp">1인 627,800</span></td>
+          <td class="trend"><span class="same">–</span></td>
+          <td><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDItMTQoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDItMTcoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></td>
         </tr>
         
         <tr>
           <td class="rank">15</td>
+          <td>2027-02-17<br><span class="ret">↩ 2027-02-20</span></td>
+          <td>PUS<br><span class="air">Korean Air</span></td>
+          <td class="price">2,551,200원<br><span class="pp">1인 637,800</span></td>
+          <td class="trend"><span class="new">NEW</span></td>
+          <td><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDItMTcoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDItMjAoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></td>
+        </tr>
+        
+        <tr>
+          <td class="rank">16</td>
+          <td>2027-02-11<br><span class="ret">↩ 2027-02-14</span></td>
+          <td>PUS<br><span class="air">Jin Air</span></td>
+          <td class="price">2,552,800원<br><span class="pp">1인 638,200</span></td>
+          <td class="trend"><span class="new">NEW</span></td>
+          <td><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDItMTEoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDItMTQoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></td>
+        </tr>
+        
+        <tr>
+          <td class="rank">17</td>
+          <td>2027-02-08<br><span class="ret">↩ 2027-02-11</span></td>
+          <td>PUS<br><span class="air">Korean Air</span></td>
+          <td class="price">2,611,200원<br><span class="pp">1인 652,800</span></td>
+          <td class="trend"><span class="same">–</span></td>
+          <td><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDItMDgoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDItMTEoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></td>
+        </tr>
+        
+        <tr>
+          <td class="rank">18</td>
+          <td>2027-02-04<br><span class="ret">↩ 2027-02-07</span></td>
+          <td>PUS<br><span class="air">Korean Air</span></td>
+          <td class="price">2,731,200원<br><span class="pp">1인 682,800</span></td>
+          <td class="trend"><span class="same">–</span></td>
+          <td><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDItMDQoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDItMDcoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></td>
+        </tr>
+        
+        <tr>
+          <td class="rank">19</td>
+          <td>2027-02-10<br><span class="ret">↩ 2027-02-13</span></td>
+          <td>PUS<br><span class="air">Korean Air</span></td>
+          <td class="price">2,731,600원<br><span class="pp">1인 682,900</span></td>
+          <td class="trend"><span class="same">–</span></td>
+          <td><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDItMTAoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDItMTMoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></td>
+        </tr>
+        
+        <tr>
+          <td class="rank">20</td>
+          <td>2027-02-07<br><span class="ret">↩ 2027-02-10</span></td>
+          <td>PUS<br><span class="air">Korean Air</span></td>
+          <td class="price">3,051,600원<br><span class="pp">1인 762,900</span></td>
+          <td class="trend"><span class="new">NEW</span></td>
+          <td><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDItMDcoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDItMTAoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></td>
+        </tr>
+        
+        <tr>
+          <td class="rank">21</td>
           <td>2027-02-05<br><span class="ret">↩ 2027-02-08</span></td>
           <td>PUS<br><span class="air">Jin Air</span></td>
           <td class="price">3,132,800원<br><span class="pp">1인 783,200</span></td>
+          <td class="trend"><span class="same">–</span></td>
+          <td><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDItMDUoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDItMDgoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></td>
+        </tr>
+        
+        <tr>
+          <td class="rank">22</td>
+          <td>2027-02-06<br><span class="ret">↩ 2027-02-09</span></td>
+          <td>PUS<br><span class="air">Jin Air</span></td>
+          <td class="price">3,132,800원<br><span class="pp">1인 783,200</span></td>
           <td class="trend"><span class="new">NEW</span></td>
+          <td><a class="book-link" href="https://www.google.com/travel/flights?tfs=GhwSCjIwMjctMDItMDYoAGoFEgNQVVNyBRIDTlJUGhwSCjIwMjctMDItMDkoAGoFEgNOUlRyBRIDUFVTQgQBAQEBSAGYAQE%3D&amp;curr=KRW&amp;hl=ko" target="_blank" rel="noopener">예약</a></td>
         </tr>
         </tbody>
     </table>
     </div>
 </div>
-<footer>Amadeus API 기반 · 하루 3회 자동 갱신</footer>
+<footer>구글 항공권 기반 · 하루 3회 자동 갱신</footer>
 <script>
   function showTab(n) {
     var contents = document.getElementsByClassName('tab-content');
