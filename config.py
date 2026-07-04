@@ -79,7 +79,7 @@ FETCH_MODE = "common"
 #    <username> = 내 깃허브 아이디, <repo> = 저장소 이름 으로 바꾸세요.
 #    예: https://hong-gildong.github.io/flight-tracker/
 # ────────────────────────────────────────────────────────────────
-DASHBOARD_URL = "https://<username>.github.io/<repo>/"
+DASHBOARD_URL = "https://nanobody1227.github.io/flight-tracker/"
 
 # ────────────────────────────────────────────────────────────────
 # 9) 파일 이름 (건드리지 않아도 됩니다)
