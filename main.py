@@ -349,7 +349,7 @@ def format_flight_html(r):
         f'<p style="margin:12px 0 0;"><a href="{link}" '
         f'style="display:inline-block;padding:10px 18px;background:#16a34a;'
         f'color:#fff;text-decoration:none;border-radius:8px;font-weight:700;">'
-        f'✈️ 예약하러 가기 (구글 항공권)</a></p>'
+        f'✈️ 예약하러 가기 (네이버 항공)</a></p>'
         f'</div>'
     )
 
