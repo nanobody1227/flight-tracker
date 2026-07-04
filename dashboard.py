@@ -15,40 +15,34 @@ import csv
 import html
 import datetime as dt
 from collections import defaultdict
-from urllib.parse import quote
-
-from fast_flights import TFSData, FlightData, Passengers
-
 import config
 
 KST = dt.timezone(dt.timedelta(hours=9))
 
 
+# 좌석 등급 → 네이버 fareType 코드
+_NAVER_FARE = {"economy": "Y", "premium-economy": "Y",
+               "business": "C", "first": "F"}
+
+
 def flight_link(origin, departure_date, return_date):
     """
-    출발지·출국일·귀국일로 '구글 항공권 예약 페이지' 주소를 만든다.
-    (거기서 실제 항공사/여행사로 이어서 예약할 수 있습니다.)
+    출발지·출국일·귀국일로 '네이버 항공권 검색 페이지' 주소를 만든다.
+    (그 날짜·인원·좌석으로 이미 걸러진 결과가 열리고, 거기서 예약합니다.)
     """
-    max_stops = 0 if config.NON_STOP else None
     try:
-        tfs = TFSData.from_interface(
-            flight_data=[
-                FlightData(date=departure_date, from_airport=origin,
-                           to_airport=config.DESTINATION, max_stops=max_stops),
-                FlightData(date=return_date, from_airport=config.DESTINATION,
-                           to_airport=origin, max_stops=max_stops),
-            ],
-            trip="round-trip",
-            passengers=Passengers(adults=config.ADULTS),
-            seat=config.SEAT,
-            max_stops=max_stops,
+        dep = departure_date.replace("-", "")   # 2027-01-26 -> 20270126
+        ret = return_date.replace("-", "")
+        fare = _NAVER_FARE.get(config.SEAT.lower(), "Y")
+        return (
+            "https://flight.naver.com/flights/international/"
+            f"{origin}-{config.DESTINATION}-{dep}/"
+            f"{config.DESTINATION}-{origin}-{ret}"
+            f"?adult={config.ADULTS}&fareType={fare}"
         )
-        b64 = tfs.as_b64().decode("utf-8")
-        return (f"https://www.google.com/travel/flights"
-                f"?tfs={quote(b64)}&curr={config.CURRENCY}&hl=ko")
     except Exception:
         # 링크 생성이 실패해도 프로그램 전체는 계속 돌아가도록 일반 검색 주소로 대체
-        return "https://www.google.com/travel/flights"
+        return "https://flight.naver.com/"
 
 
 def read_rows():
@@ -365,7 +359,7 @@ def build_dashboard():
   <div class="tabs">{tab_buttons}</div>
   {''.join(tab_contents)}
 </div>
-<footer>구글 항공권 기반 · 하루 3회 자동 갱신</footer>
+<footer>구글 항공권 데이터 · 네이버 항공 예약 연결 · 하루 3회 자동 갱신</footer>
 <script>
   function showTab(n) {{
     var contents = document.getElementsByClassName('tab-content');
