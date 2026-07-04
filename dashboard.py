@@ -58,6 +58,11 @@ def read_rows():
     with open(config.CSV_FILE, "r", encoding="utf-8-sig") as f:
         reader = csv.DictReader(f)
         rows = []
+        # 옛 기록에는 없을 수 있는 칸 → 없으면 빈칸으로 채워 안전하게
+        leg_cols = [
+            "가는편항공사", "가는편출발", "가는편도착", "가는편소요",
+            "오는편항공사", "오는편출발", "오는편도착", "오는편소요",
+        ]
         for row in reader:
             # 숫자로 바꿔서 다루기 쉽게 정리
             try:
@@ -65,10 +70,8 @@ def read_rows():
                 row["1인가격KRW"] = int(row["1인가격KRW"])
             except (ValueError, KeyError):
                 continue
-            # 시간 칸은 옛 기록엔 없을 수 있으니 없으면 빈칸으로
-            row["가는편출발"] = row.get("가는편출발") or ""
-            row["가는편도착"] = row.get("가는편도착") or ""
-            row["소요시간"] = row.get("소요시간") or ""
+            for c in leg_cols:
+                row[c] = row.get(c) or ""
             rows.append(row)
         return rows
 
@@ -116,12 +119,16 @@ def build_tab_data(rows, label):
             "origin": latest["출발지"],
             "departure": latest["출국일"],
             "return": latest["귀국일"],
-            "airline": latest["항공사"],
             "total": latest["총가격KRW"],
             "per_person": latest["1인가격KRW"],
-            "dep_time": latest.get("가는편출발", ""),
-            "arr_time": latest.get("가는편도착", ""),
-            "duration": latest.get("소요시간", ""),
+            "out_airline": latest.get("가는편항공사", ""),
+            "out_dep": latest.get("가는편출발", ""),
+            "out_arr": latest.get("가는편도착", ""),
+            "out_dur": latest.get("가는편소요", ""),
+            "ret_airline": latest.get("오는편항공사", ""),
+            "ret_dep": latest.get("오는편출발", ""),
+            "ret_arr": latest.get("오는편도착", ""),
+            "ret_dur": latest.get("오는편소요", ""),
             "trend": trend,
             "diff": diff,
         })
@@ -142,64 +149,99 @@ def trend_badge(trend, diff):
     return '<span class="same">–</span>'
 
 
+def leg_row(kind, airline, dep, arr, a_from, a_to, dur):
+    """
+    항공편 한 편(가는/오는)을 네이버 스타일 한 줄로 그린다.
+    kind = "out"(가는 편) 또는 "ret"(오는 편)
+    """
+    tag = "가는 편" if kind == "out" else "오는 편"
+    # 시각 정보가 아예 없으면(옛 기록) 최소한만 표시
+    if not dep and not arr:
+        return (f'<div class="leg">'
+                f'<span class="leg-tag {kind}">{tag}</span>'
+                f'<span class="leg-air">{html.escape(airline or "-")}</span>'
+                f'<span class="leg-route">{html.escape(a_from)} → {html.escape(a_to)}</span>'
+                f'</div>')
+    dur_html = f'<span class="leg-dur">{html.escape(dur)}</span>' if dur else ""
+    return (
+        f'<div class="leg">'
+        f'<span class="leg-tag {kind}">{tag}</span>'
+        f'<span class="leg-air">{html.escape(airline or "-")}</span>'
+        f'<span class="leg-route">'
+        f'<b>{html.escape(dep)}</b> {html.escape(a_from)} '
+        f'<span class="arw">→</span> '
+        f'<b>{html.escape(arr)}</b> {html.escape(a_to)}'
+        f'</span>'
+        f'{dur_html}'
+        f'</div>'
+    )
+
+
+def flight_card(r, dest, extra_class="", badge_html=""):
+    """왕복 한 건을 네이버 스타일 카드로 그린다 (역대최저가/순위표 공용)."""
+    origin = r["origin"]
+    link = flight_link(origin, r["departure"], r["return"])
+    out = leg_row("out", r["out_airline"], r["out_dep"], r["out_arr"],
+                  origin, dest, r["out_dur"])
+    ret = leg_row("ret", r["ret_airline"], r["ret_dep"], r["ret_arr"],
+                  dest, origin, r["ret_dur"])
+    return (
+        f'<div class="fcard {extra_class}">'
+        f'<div class="fcard-head">'
+        f'<span class="fdate">{html.escape(r["departure"])} ~ {html.escape(r["return"])}</span>'
+        f'{badge_html}'
+        f'</div>'
+        f'<div class="legs">{out}{ret}</div>'
+        f'<div class="fcard-foot">'
+        f'<div class="fprice"><b>1인 {r["per_person"]:,}원</b>'
+        f'<span>성인 {config.ADULTS}명 총 {r["total"]:,}원</span></div>'
+        f'<a class="book-link" href="{html.escape(link)}" target="_blank" rel="noopener">예약</a>'
+        f'</div>'
+        f'</div>'
+    )
+
+
 def render_tab(record, ranking, label):
     """한 탭(2박3일 또는 3박4일)의 HTML 내용을 만든다."""
     if record is None:
         return f'<p class="empty">아직 {html.escape(label)} 검색 결과가 없습니다.</p>'
 
-    # 역대 최저가 강조 카드 (1인당 가격을 크게)
-    record_link = flight_link(record['출발지'], record['출국일'], record['귀국일'])
-    # 가는 편 시각 줄 (정보가 있을 때만 표시)
-    r_dep, r_arr, r_dur = record.get("가는편출발", ""), record.get("가는편도착", ""), record.get("소요시간", "")
-    record_time = ""
-    if r_dep or r_arr:
-        dur_txt = f" · {html.escape(r_dur)}" if r_dur else ""
-        record_time = (f"<br>가는 편 {html.escape(r_dep)} → {html.escape(r_arr)}{dur_txt}")
-    record_html = f"""
-    <div class="record-card">
-      <div class="record-title">역대 최저가 ({html.escape(label)}) · 1인당</div>
-      <div class="record-price">{record['1인가격KRW']:,}원</div>
-      <div class="record-sub">성인 {config.ADULTS}명 총액 {record['총가격KRW']:,}원</div>
-      <div class="record-meta">
-        {html.escape(record['출발지'])} → {html.escape(config.DESTINATION)}
-        · {html.escape(record['항공사'])}<br>
-        출국 {html.escape(record['출국일'])} / 귀국 {html.escape(record['귀국일'])}{record_time}
-      </div>
-      <a class="book-btn" href="{html.escape(record_link)}" target="_blank" rel="noopener">✈️ 예약하러 가기 (구글 항공권)</a>
-    </div>
-    """
+    # 역대 최저가(모든 기록 중 최저) 를 카드 형태로 변환
+    best = {
+        "origin": record["출발지"],
+        "departure": record["출국일"],
+        "return": record["귀국일"],
+        "total": record["총가격KRW"],
+        "per_person": record["1인가격KRW"],
+        "out_airline": record.get("가는편항공사", ""),
+        "out_dep": record.get("가는편출발", ""),
+        "out_arr": record.get("가는편도착", ""),
+        "out_dur": record.get("가는편소요", ""),
+        "ret_airline": record.get("오는편항공사", ""),
+        "ret_dep": record.get("오는편출발", ""),
+        "ret_arr": record.get("오는편도착", ""),
+        "ret_dur": record.get("오는편소요", ""),
+    }
+    record_card = (
+        f'<div class="record-wrap">'
+        f'<div class="record-title">🏆 역대 최저가 ({html.escape(label)})</div>'
+        + flight_card(best, config.DESTINATION, extra_class="record",
+                      badge_html='<span class="badge-best">최저가</span>')
+        + '</div>'
+    )
 
-    # 순위표 (각 줄 = 날짜 조합 하나)
-    rows_html = ""
-    for i, r in enumerate(ranking, start=1):
-        link = flight_link(r['origin'], r['departure'], r['return'])
-        # 가는 편 시각 (있을 때만)
-        tm = ""
-        if r.get("dep_time") or r.get("arr_time"):
-            tm = f'<br><span class="tm">가는 편 {html.escape(r.get("dep_time",""))} → {html.escape(r.get("arr_time",""))}</span>'
-        rows_html += f"""
-        <tr>
-          <td class="rank">{i}</td>
-          <td>{html.escape(r['departure'])}<br><span class="ret">↩ {html.escape(r['return'])}</span></td>
-          <td>{html.escape(r['origin'])}<br><span class="air">{html.escape(r['airline'])}</span>{tm}</td>
-          <td class="price">1인 {r['per_person']:,}원<br><span class="pp">총 {r['total']:,}</span></td>
-          <td class="trend">{trend_badge(r['trend'], r['diff'])}</td>
-          <td><a class="book-link" href="{html.escape(link)}" target="_blank" rel="noopener">예약</a></td>
-        </tr>
-        """
-
-    table_html = f"""
-    <table>
-      <thead>
-        <tr>
-          <th>#</th><th>출국일 / 귀국일</th><th>출발/항공사</th>
-          <th>가격</th><th>추이</th><th>예약</th>
-        </tr>
-      </thead>
-      <tbody>{rows_html}</tbody>
-    </table>
-    """
-    return record_html + table_html
+    # 순위표 (카드 목록)
+    cards = []
+    for r in ranking:
+        cards.append(flight_card(
+            r, config.DESTINATION,
+            badge_html=trend_badge(r["trend"], r["diff"]),
+        ))
+    list_html = (
+        f'<div class="list-title">전체 날짜 순위 (싼 순)</div>'
+        f'<div class="card-list">{"".join(cards)}</div>'
+    )
+    return record_card + list_html
 
 
 def build_dashboard():
@@ -256,39 +298,60 @@ def build_dashboard():
   .tab-btn.active {{ background: #2563eb; color: #fff; }}
   .tab-content {{ display: none; }}
   .tab-content.active {{ display: block; }}
-  .record-card {{
-    background: #fff; border-radius: 16px; padding: 20px; text-align: center;
-    box-shadow: 0 2px 10px rgba(0,0,0,.06); margin-bottom: 16px;
-    border: 2px solid #2563eb;
+  /* 역대 최저가 강조 영역 */
+  .record-wrap {{ margin-bottom: 20px; }}
+  .record-title {{ font-size: 15px; font-weight: 800; color: #1e40af; margin: 6px 2px 10px; }}
+  .list-title {{ font-size: 14px; font-weight: 700; color: #475569; margin: 18px 2px 10px; }}
+
+  /* 항공편 카드 (네이버 스타일) */
+  .card-list {{ display: flex; flex-direction: column; gap: 10px; }}
+  .fcard {{
+    background: #fff; border: 1px solid #e5e9f0; border-radius: 14px;
+    padding: 14px 16px; box-shadow: 0 1px 4px rgba(0,0,0,.04);
   }}
-  .record-title {{ font-size: 13px; color: #64748b; font-weight: 600; }}
-  .record-price {{ font-size: 38px; font-weight: 800; color: #dc2626; margin: 6px 0; }}
-  .record-sub {{ font-size: 13px; color: #475569; }}
-  .record-meta {{ font-size: 13px; color: #334155; margin-top: 10px; line-height: 1.6; }}
-  .book-btn {{
-    display: inline-block; margin-top: 14px; padding: 12px 20px;
-    background: #16a34a; color: #fff; text-decoration: none;
-    border-radius: 10px; font-weight: 700; font-size: 15px;
+  .fcard.record {{ border: 2px solid #2563eb; box-shadow: 0 3px 14px rgba(37,99,235,.14); }}
+  .fcard-head {{
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 8px;
   }}
+  .fdate {{ font-size: 13px; font-weight: 700; color: #334155; }}
+  .badge-best {{
+    background: #dc2626; color: #fff; font-size: 11px; font-weight: 700;
+    padding: 3px 9px; border-radius: 20px;
+  }}
+  /* 가는/오는 편 한 줄 */
+  .legs {{ border-top: 1px solid #f1f5f9; }}
+  .leg {{
+    display: flex; align-items: center; flex-wrap: wrap; gap: 8px;
+    padding: 9px 0; border-bottom: 1px solid #f1f5f9;
+  }}
+  .leg-tag {{
+    flex: 0 0 auto; font-size: 11px; font-weight: 700; color: #fff;
+    padding: 3px 8px; border-radius: 6px;
+  }}
+  .leg-tag.out {{ background: #2563eb; }}
+  .leg-tag.ret {{ background: #0891b2; }}
+  .leg-air {{ font-size: 13px; color: #475569; min-width: 62px; }}
+  .leg-route {{ font-size: 15px; color: #111827; }}
+  .leg-route b {{ font-size: 16px; }}
+  .leg-route .arw {{ color: #94a3b8; margin: 0 2px; }}
+  .leg-dur {{ font-size: 12px; color: #94a3b8; margin-left: auto; }}
+  /* 가격 + 예약 버튼 */
+  .fcard-foot {{
+    display: flex; justify-content: space-between; align-items: flex-end;
+    margin-top: 10px;
+  }}
+  .fprice b {{ display: block; font-size: 22px; font-weight: 800; color: #dc2626; }}
+  .fprice span {{ font-size: 12px; color: #64748b; }}
   .book-link {{
-    display: inline-block; padding: 6px 12px; background: #16a34a;
-    color: #fff; text-decoration: none; border-radius: 8px;
-    font-weight: 700; font-size: 12px;
+    flex: 0 0 auto; padding: 10px 18px; background: #16a34a; color: #fff;
+    text-decoration: none; border-radius: 10px; font-weight: 700; font-size: 14px;
   }}
-  table {{
-    width: 100%; border-collapse: collapse; background: #fff;
-    border-radius: 12px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,.05);
-  }}
-  th, td {{ padding: 10px 8px; text-align: center; font-size: 13px; border-bottom: 1px solid #eef2f6; }}
-  th {{ background: #f8fafc; color: #64748b; font-size: 12px; }}
-  td.rank {{ font-weight: 800; color: #2563eb; }}
-  td.price {{ font-weight: 700; }}
-  .ret, .air, .pp {{ font-size: 11px; color: #94a3b8; }}
-  .tm {{ font-size: 11px; color: #2563eb; }}
-  .down {{ color: #16a34a; font-weight: 700; }}
-  .up {{ color: #dc2626; font-weight: 700; }}
-  .new {{ color: #2563eb; font-weight: 700; font-size: 11px; }}
-  .same {{ color: #94a3b8; }}
+  /* 추이 배지 */
+  .down {{ background:#dcfce7; color:#16a34a; font-weight:700; font-size:11px; padding:3px 8px; border-radius:20px; }}
+  .up {{ background:#fee2e2; color:#dc2626; font-weight:700; font-size:11px; padding:3px 8px; border-radius:20px; }}
+  .new {{ background:#dbeafe; color:#2563eb; font-weight:700; font-size:11px; padding:3px 8px; border-radius:20px; }}
+  .same {{ color:#94a3b8; font-size:11px; }}
   .empty {{ text-align: center; color: #94a3b8; padding: 40px 0; }}
   footer {{ text-align: center; color: #94a3b8; font-size: 12px; padding: 20px; }}
 </style>

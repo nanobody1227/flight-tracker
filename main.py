@@ -4,15 +4,15 @@
 메인 프로그램 (main.py)
 ------------------------------------------------------------------------
 하는 일 (순서대로):
-  1) Amadeus API에 로그인해서 출입증(토큰)을 받는다
-  2) 정해진 날짜 범위 x (2박3일 / 3박4일) 조합으로 왕복 직항 최저가 검색
-  3) 결과를 price_history.csv 에 계속 쌓는다
-  4) 역대 최저가(2박3일 / 3박4일 각각)와 비교
+  1) 구글 항공권(fast-flights)에서 가는 편·오는 편을 각각 편도로 검색
+     (2박3일 / 3박4일 조합) → 두 편의 최저가를 합쳐 왕복 최저가로 사용
+  2) 결과를 price_history.csv 에 계속 쌓는다
+  3) 역대 최저가(2박3일 / 3박4일 각각)와 비교
        - 더 싸지면 → 알림 메일 발송 + 최저가 갱신
-  5) 하루 1번은 "오늘의 최저가 요약" 메일 발송
-  6) 웹 대시보드(index.html) 자동 생성
+  4) 하루 1번은 "오늘의 최저가 요약" 메일 발송
+  5) 웹 대시보드(index.html) 자동 생성
 
-※ API 키와 Gmail 비밀번호는 코드에 쓰지 않고 "환경변수"에서 읽어옵니다.
+※ Gmail 비밀번호는 코드에 쓰지 않고 "환경변수"에서 읽어옵니다.
   (GitHub Secrets 또는 내 컴퓨터 환경변수)
 ========================================================================
 """
@@ -64,13 +64,17 @@ def parse_price(price_text):
 
 
 def clean_time(text):
-    """'9:30 AM on Tue, Jan 26' → '오전 9:30' 처럼 시각만 깔끔히 뽑는다."""
-    t = (text or "").split(" on ")[0].strip()  # 날짜 부분 떼어내고 시각만
-    if t.endswith("AM"):
-        return "오전 " + t[:-2].strip()
-    if t.endswith("PM"):
-        return "오후 " + t[:-2].strip()
-    return t
+    """'4:20 PM on Tue, Jan 26' → '16:20' (24시간 형식) 으로 바꾼다."""
+    t = (text or "").split(" on ")[0].strip()  # 날짜 부분 떼고 시각만: "4:20 PM"
+    m = re.match(r"(\d{1,2}):(\d{2})\s*(AM|PM)", t)
+    if not m:
+        return t
+    hour, minute, ap = int(m.group(1)), m.group(2), m.group(3)
+    if ap == "PM" and hour != 12:
+        hour += 12
+    if ap == "AM" and hour == 12:
+        hour = 0
+    return f"{hour:02d}:{minute}"
 
 
 def kor_duration(text):
@@ -78,44 +82,37 @@ def kor_duration(text):
     return (text or "").replace(" hr", "시간").replace(" min", "분").strip()
 
 
-def search_one(origin, departure_date, return_date):
+def search_leg(from_airport, to_airport, date):
     """
-    한 개의 (출발지, 출국일, 귀국일) 조합에 대해
-    왕복 직항 최저가 항공권을 검색해서
-    가장 싼 항공편 1개의 정보를 돌려준다.
-    결과가 없거나 오류면 None 을 돌려준다.
+    한 방향(편도) 직항 최저가를 검색한다.
+      예) 가는 편 = PUS→NRT, 오는 편 = NRT→PUS
+    가장 싼 직항 1편의 정보를 dict로 돌려준다. 없으면 None.
     """
-    # 직항만 보려면 경유 횟수 최대값을 0으로 (config.NON_STOP=True 이면 0)
     max_stops = 0 if config.NON_STOP else None
 
-    # 검색 조건표(필터) 만들기: 갈 때(origin→NRT), 올 때(NRT→origin)
     tfs = TFSData.from_interface(
         flight_data=[
-            FlightData(date=departure_date, from_airport=origin,
-                       to_airport=config.DESTINATION, max_stops=max_stops),
-            FlightData(date=return_date, from_airport=config.DESTINATION,
-                       to_airport=origin, max_stops=max_stops),
+            FlightData(date=date, from_airport=from_airport,
+                       to_airport=to_airport, max_stops=max_stops),
         ],
-        trip="round-trip",
+        trip="one-way",
         passengers=Passengers(adults=config.ADULTS),
         seat=config.SEAT,
         max_stops=max_stops,
     )
 
-    # 통화를 KRW(원화)로 고정해서 가져온다 (서버 위치와 무관하게 원화로)
     try:
         result = get_flights_from_filter(
             tfs, currency=config.CURRENCY, mode=config.FETCH_MODE
         )
     except Exception as e:
-        print(f"  [주의] {origin} {departure_date}~{return_date} 검색 실패: {e}")
+        print(f"  [주의] {from_airport}→{to_airport} {date} 검색 실패: {e}")
         return None
 
-    # 후보들 중 직항이면서 가격이 있는 것만 모아 최저가 찾기
     best_price = None
-    best_flight = None  # 가장 싼 항공편 객체 그대로 보관 (시간 정보 때문에)
+    best_flight = None
     for f in result.flights:
-        if config.NON_STOP and f.stops != 0:  # 혹시 섞여 나온 경유편 제외
+        if config.NON_STOP and f.stops != 0:
             continue
         price = parse_price(f.price)
         if price is None:
@@ -127,18 +124,9 @@ def search_one(origin, departure_date, return_date):
     if best_flight is None:
         return None
 
-    total_price = best_price                           # 성인 전체 총액(KRW)
-    per_person = round(total_price / config.ADULTS)    # 1인당 가격
-    airline = best_flight.name or "?"
-
     return {
-        "origin": origin,
-        "departure_date": departure_date,
-        "return_date": return_date,
-        "airline": airline,
-        "total_price": total_price,
-        "per_person": per_person,
-        # 가는 편(출발지→도쿄) 시각·소요시간 (왕복 검색은 가는 편만 제공됨)
+        "airline": best_flight.name or "?",
+        "price": best_price,                       # 성인 전체 총액(KRW)
         "dep_time": clean_time(best_flight.departure),
         "arr_time": clean_time(best_flight.arrival),
         "duration": kor_duration(best_flight.duration),
@@ -147,59 +135,85 @@ def search_one(origin, departure_date, return_date):
 
 # ================================================================
 # 3. 전체 검색 (모든 날짜 x 2박3일/3박4일)
+#    가는 편·오는 편을 각각 편도로 검색해 합쳐서 왕복 결과를 만든다.
+#    (같은 날짜는 한 번만 검색하도록 캐시해서 검색 횟수를 줄인다)
 # ================================================================
+def _combine(origin, dep_str, ret_str, out_leg, ret_leg):
+    """가는 편 + 오는 편 정보를 하나의 왕복 결과 dict로 합친다."""
+    total_price = out_leg["price"] + ret_leg["price"]
+    return {
+        "origin": origin,
+        "departure_date": dep_str,
+        "return_date": ret_str,
+        "total_price": total_price,
+        "per_person": round(total_price / config.ADULTS),
+        # 가는 편 (origin → 도쿄)
+        "out_airline": out_leg["airline"],
+        "out_dep": out_leg["dep_time"],
+        "out_arr": out_leg["arr_time"],
+        "out_dur": out_leg["duration"],
+        # 오는 편 (도쿄 → origin)
+        "ret_airline": ret_leg["airline"],
+        "ret_dep": ret_leg["dep_time"],
+        "ret_arr": ret_leg["arr_time"],
+        "ret_dur": ret_leg["duration"],
+    }
+
+
+def _search_origin(origin, start, end, search_time, results):
+    """한 출발지(부산 또는 인천)에 대해 전체 날짜를 편도 2방향으로 검색."""
+    out_cache = {}   # {출국일: 가는 편 최저 dict}  (같은 날 재검색 방지)
+    ret_cache = {}   # {귀국일: 오는 편 최저 dict}
+
+    def get_out(date_str):
+        if date_str not in out_cache:
+            out_cache[date_str] = search_leg(origin, config.DESTINATION, date_str)
+            time.sleep(config.SLEEP_BETWEEN_CALLS)
+        return out_cache[date_str]
+
+    def get_ret(date_str):
+        if date_str not in ret_cache:
+            ret_cache[date_str] = search_leg(config.DESTINATION, origin, date_str)
+            time.sleep(config.SLEEP_BETWEEN_CALLS)
+        return ret_cache[date_str]
+
+    day = start
+    while day <= end:
+        dep_str = day.isoformat()
+        out_leg = get_out(dep_str)
+        for nights in config.STAY_OPTIONS:
+            ret_str = (day + dt.timedelta(days=nights)).isoformat()
+            ret_leg = get_ret(ret_str)
+            if out_leg is None or ret_leg is None:
+                continue
+            info = _combine(origin, dep_str, ret_str, out_leg, ret_leg)
+            info["search_time"] = search_time
+            info["stay_label"] = config.STAY_LABELS[nights]
+            info["nights"] = nights
+            results.append(info)
+            print(f"  찾음: {info['stay_label']} {dep_str}~{ret_str} "
+                  f"가는 편 {info['out_airline']}/오는 편 {info['ret_airline']} "
+                  f"{info['total_price']:,}원")
+        day += dt.timedelta(days=1)
+
+
 def run_search():
     """
-    출국일 범위 전체를 하루씩 돌면서,
-    2박3일 / 3박4일 각각의 최저가를 모아 리스트로 돌려준다.
+    출국일 범위 전체를 돌면서, 2박3일 / 3박4일 각각의
+    (가는 편 최저 + 오는 편 최저) 합계를 모아 리스트로 돌려준다.
     """
-    results = []  # 여기에 검색 결과를 담는다
-
+    results = []
     start = dt.date.fromisoformat(config.DEPART_START)
     end = dt.date.fromisoformat(config.DEPART_END)
     search_time = now_kst().strftime("%Y-%m-%d %H:%M:%S")
 
-    # 검색할 출발지 목록 정하기 (기본은 부산만)
-    origins = [config.ORIGIN]
+    # 기본: 부산 출발
+    _search_origin(config.ORIGIN, start, end, search_time, results)
 
-    day = start
-    while day <= end:
-        for nights in config.STAY_OPTIONS:
-            return_day = day + dt.timedelta(days=nights)
-            dep_str = day.isoformat()
-            ret_str = return_day.isoformat()
-
-            for origin in origins:
-                info = search_one(origin, dep_str, ret_str)
-                time.sleep(config.SLEEP_BETWEEN_CALLS)  # 서버 배려용 잠깐 쉬기
-                if info is None:
-                    continue
-                info["search_time"] = search_time
-                info["stay_label"] = config.STAY_LABELS[nights]
-                info["nights"] = nights
-                results.append(info)
-                print(f"  찾음: {info['stay_label']} {dep_str}~{ret_str} "
-                      f"{info['airline']} {info['total_price']:,}원")
-        day += dt.timedelta(days=1)
-
-    # ── 결과가 너무 적으면 인천(ICN) 출발도 추가 검색 ──
-    busan_count = len(results)
-    if config.INCLUDE_ICN_FALLBACK and busan_count < config.MIN_RESULTS_THRESHOLD:
-        print(f"부산 결과가 {busan_count}개로 적어 인천(ICN) 출발도 검색합니다.")
-        day = start
-        while day <= end:
-            for nights in config.STAY_OPTIONS:
-                return_day = day + dt.timedelta(days=nights)
-                info = search_one(config.ICN_ORIGIN,
-                                  day.isoformat(), return_day.isoformat())
-                time.sleep(config.SLEEP_BETWEEN_CALLS)
-                if info is None:
-                    continue
-                info["search_time"] = search_time
-                info["stay_label"] = config.STAY_LABELS[nights]
-                info["nights"] = nights
-                results.append(info)
-            day += dt.timedelta(days=1)
+    # 결과가 너무 적으면 인천(ICN) 출발도 추가 검색
+    if config.INCLUDE_ICN_FALLBACK and len(results) < config.MIN_RESULTS_THRESHOLD:
+        print(f"부산 결과가 {len(results)}개로 적어 인천(ICN) 출발도 검색합니다.")
+        _search_origin(config.ICN_ORIGIN, start, end, search_time, results)
 
     return results, search_time
 
@@ -209,7 +223,8 @@ def run_search():
 # ================================================================
 CSV_HEADER = [
     "검색시각", "일정타입", "출발지", "출국일", "귀국일",
-    "항공사", "가는편출발", "가는편도착", "소요시간",
+    "가는편항공사", "가는편출발", "가는편도착", "가는편소요",
+    "오는편항공사", "오는편출발", "오는편도착", "오는편소요",
     "총가격KRW", "1인가격KRW",
 ]
 
@@ -237,10 +252,11 @@ def append_to_csv(results):
             writer.writerow({
                 "검색시각": r["search_time"], "일정타입": r["stay_label"],
                 "출발지": r["origin"], "출국일": r["departure_date"],
-                "귀국일": r["return_date"], "항공사": r["airline"],
-                "가는편출발": r.get("dep_time", ""),
-                "가는편도착": r.get("arr_time", ""),
-                "소요시간": r.get("duration", ""),
+                "귀국일": r["return_date"],
+                "가는편항공사": r["out_airline"], "가는편출발": r["out_dep"],
+                "가는편도착": r["out_arr"], "가는편소요": r["out_dur"],
+                "오는편항공사": r["ret_airline"], "오는편출발": r["ret_dep"],
+                "오는편도착": r["ret_arr"], "오는편소요": r["ret_dur"],
                 "총가격KRW": r["total_price"], "1인가격KRW": r["per_person"],
             })
 
@@ -297,31 +313,44 @@ def send_email(subject, html_body):
     print(f"  메일 발송 완료: {subject}")
 
 
-def format_flight_html(r):
-    """항공편 한 건을 메일용 HTML 조각으로 만든다."""
-    link = flight_link(r["origin"], r["departure_date"], r["return_date"])
-    # 가는 편 시각 줄 (정보가 있을 때만)
-    dep_t = r.get("dep_time", "")
-    arr_t = r.get("arr_time", "")
-    dur = r.get("duration", "")
-    time_line = ""
-    if dep_t or arr_t:
-        dur_txt = f" (소요 {dur})" if dur else ""
-        time_line = (f"<li>가는 편 시각: {dep_t} → {arr_t}{dur_txt}</li>")
+def _leg_line(tag, tag_color, airline, dep, arr, a_from, a_to, dur):
+    """메일용 한 편(가는/오는) 한 줄 HTML."""
+    dur_txt = f" · {dur}" if dur else ""
     return (
-        f"<ul>"
-        f"<li>일정: <b>{r['stay_label']}</b></li>"
-        f"<li>출발지 → 도착지: {r['origin']} → {config.DESTINATION}</li>"
-        f"<li>출국일: {r['departure_date']} / 귀국일: {r['return_date']}</li>"
-        f"{time_line}"
-        f"<li>항공사: {r['airline']}</li>"
-        f"<li>1인당 가격: <b style='font-size:18px;color:#dc2626;'>{r['per_person']:,}원</b></li>"
-        f"<li>총 가격(성인 {config.ADULTS}명): {r['total_price']:,}원</li>"
-        f"</ul>"
-        f'<p><a href="{link}" '
+        f'<div style="padding:8px 0;border-bottom:1px solid #eee;">'
+        f'<span style="display:inline-block;min-width:52px;padding:2px 8px;'
+        f'background:{tag_color};color:#fff;border-radius:6px;font-size:12px;'
+        f'font-weight:700;">{tag}</span> '
+        f'<b>{dep}</b> {a_from} → <b>{arr}</b> {a_to} '
+        f'<span style="color:#64748b;">({airline}{dur_txt})</span>'
+        f'</div>'
+    )
+
+
+def format_flight_html(r):
+    """항공편 한 건(왕복)을 메일용 HTML 조각으로 만든다."""
+    link = flight_link(r["origin"], r["departure_date"], r["return_date"])
+    origin, dest = r["origin"], config.DESTINATION
+    out_line = _leg_line("가는 편", "#2563eb", r["out_airline"],
+                         r["out_dep"], r["out_arr"], origin, dest, r["out_dur"])
+    ret_line = _leg_line("오는 편", "#0891b2", r["ret_airline"],
+                         r["ret_dep"], r["ret_arr"], dest, origin, r["ret_dur"])
+    return (
+        f'<div style="border:1px solid #e2e8f0;border-radius:10px;padding:14px;'
+        f'margin:10px 0;">'
+        f'<div style="font-size:13px;color:#64748b;">{r["stay_label"]} · '
+        f'{r["departure_date"]} ~ {r["return_date"]}</div>'
+        f'{out_line}{ret_line}'
+        f'<div style="margin-top:10px;">'
+        f'<span style="font-size:20px;font-weight:800;color:#dc2626;">'
+        f'1인 {r["per_person"]:,}원</span> '
+        f'<span style="color:#64748b;">(성인 {config.ADULTS}명 총 {r["total_price"]:,}원)</span>'
+        f'</div>'
+        f'<p style="margin:12px 0 0;"><a href="{link}" '
         f'style="display:inline-block;padding:10px 18px;background:#16a34a;'
         f'color:#fff;text-decoration:none;border-radius:8px;font-weight:700;">'
-        f'✈️ 이 항공편 예약하러 가기 (구글 항공권)</a></p>'
+        f'✈️ 예약하러 가기 (구글 항공권)</a></p>'
+        f'</div>'
     )
 
 
@@ -403,7 +432,8 @@ def main():
             records[label] = {
                 "total_price": r["total_price"],
                 "per_person": r["per_person"],
-                "airline": r["airline"],
+                "out_airline": r["out_airline"],
+                "ret_airline": r["ret_airline"],
                 "origin": r["origin"],
                 "departure_date": r["departure_date"],
                 "return_date": r["return_date"],
