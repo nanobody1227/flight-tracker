@@ -1,22 +1,22 @@
 {
   "2박3일": {
-    "total_price": 1939074,
-    "per_person": 484768,
+    "total_price": 1930946,
+    "per_person": 482736,
     "out_airline": "Jeju Air",
     "ret_airline": "Jeju Air",
     "origin": "PUS",
     "departure_date": "2027-01-27",
     "return_date": "2027-01-29",
-    "search_time": "2026-07-10 08:56:42"
+    "search_time": "2026-07-12 16:32:25"
   },
   "3박4일": {
-    "total_price": 1939074,
-    "per_person": 484768,
+    "total_price": 1930946,
+    "per_person": 482736,
     "out_airline": "Jeju Air",
     "ret_airline": "Jeju Air",
     "origin": "PUS",
     "departure_date": "2027-01-27",
     "return_date": "2027-01-30",
-    "search_time": "2026-07-10 08:56:42"
+    "search_time": "2026-07-12 16:32:25"
   }
 }
