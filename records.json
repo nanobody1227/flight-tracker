@@ -1,13 +1,13 @@
 {
   "2박3일": {
-    "total_price": 1558927,
-    "per_person": 389732,
-    "out_airline": "Air Busan",
+    "total_price": 1536272,
+    "per_person": 384068,
+    "out_airline": "Jeju Air",
     "ret_airline": "Air Busan",
     "origin": "PUS",
-    "departure_date": "2027-01-26",
-    "return_date": "2027-01-28",
-    "search_time": "2026-07-29 00:26:41"
+    "departure_date": "2027-02-02",
+    "return_date": "2027-02-04",
+    "search_time": "2026-07-29 08:48:29"
   },
   "3박4일": {
     "total_price": 1575738,
