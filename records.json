@@ -1,13 +1,13 @@
 {
   "2박3일": {
-    "total_price": 1563283,
-    "per_person": 390821,
+    "total_price": 1558927,
+    "per_person": 389732,
     "out_airline": "Air Busan",
     "ret_airline": "Air Busan",
     "origin": "PUS",
     "departure_date": "2027-01-26",
     "return_date": "2027-01-28",
-    "search_time": "2026-07-28 16:43:10"
+    "search_time": "2026-07-29 00:26:41"
   },
   "3박4일": {
     "total_price": 1575738,
